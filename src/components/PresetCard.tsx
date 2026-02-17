@@ -1,6 +1,7 @@
+"use client";
+
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
-import clsx from "clsx";
 import { useState } from "react";
 
 export interface PresetProps {
@@ -18,7 +19,7 @@ function PresetIcon({ icon }: { icon: string }) {
     const [error, setError] = useState(false);
 
     if (error || !icon) {
-        return <MaterialIcon name="public" className="text-xl text-muted-foreground" />;
+        return <MaterialIcon name="public" className="text-xl text-muted-foreground" aria-hidden="true" />;
     }
 
     return (
@@ -59,19 +60,21 @@ export function PresetCard({ id, title, description, author, downloads, time, ty
             <div className="mt-auto flex items-center justify-between">
                 <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
                     <div className="flex items-center gap-1.5">
-                        <MaterialIcon name="download" className="text-xs" />
+                        <MaterialIcon name="download" className="text-xs" aria-hidden="true" />
                         <span>{downloads}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <MaterialIcon name="schedule" className="text-xs" />
+                        <MaterialIcon name="schedule" className="text-xs" aria-hidden="true" />
                         <span>{time}</span>
                     </div>
                 </div>
 
-                <Link href={`/presets/${id}`}>
-                    <button className="text-xs font-semibold bg-[#171717] hover:bg-[#262626] text-foreground px-3 py-1.5 rounded-md transition-colors border border-[#262626] cursor-pointer">
-                        Use Preset
-                    </button>
+                <Link
+                    href={`/presets/${id}`}
+                    className="text-xs font-semibold bg-[#171717] hover:bg-[#262626] text-foreground px-3 py-1.5 rounded-md transition-colors border border-[#262626] cursor-pointer inline-flex items-center justify-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+                    aria-label={`Use ${title} preset`}
+                >
+                    Use Preset
                 </Link>
             </div>
         </div>

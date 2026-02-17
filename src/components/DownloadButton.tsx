@@ -25,7 +25,7 @@ export default function DownloadButton({ presetId, presetTitle, configJson }: Do
         // Increment only if not in cooldown
         if (!downloadCooldown.current) {
             downloadCooldown.current = true;
-            await incrementDownloads();
+            incrementDownloads();
             setTimeout(() => { downloadCooldown.current = false; }, 30000);
         }
 
@@ -48,7 +48,7 @@ export default function DownloadButton({ presetId, presetTitle, configJson }: Do
         // Increment only if not in cooldown
         if (!copyCooldown.current) {
             copyCooldown.current = true;
-            await incrementDownloads();
+            incrementDownloads();
             setTimeout(() => { copyCooldown.current = false; }, 30000);
         }
 
@@ -61,22 +61,24 @@ export default function DownloadButton({ presetId, presetTitle, configJson }: Do
         <div className="flex gap-3">
             <button
                 onClick={handleDownload}
-                className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer ${downloaded
+                aria-label={`Download ${presetTitle} configuration`}
+                className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${downloaded
                         ? "bg-green-500/10 border-green-500/30 text-green-400"
                         : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
                     }`}
             >
-                <MaterialIcon name={downloaded ? "check" : "download"} className="text-lg" />
+                <MaterialIcon name={downloaded ? "check" : "download"} className="text-lg" aria-hidden="true" />
                 {downloaded ? "Downloaded!" : "Download"}
             </button>
             <button
                 onClick={handleCopy}
-                className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer ${copied
+                aria-label={`Copy ${presetTitle} configuration to clipboard`}
+                className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${copied
                         ? "bg-green-500/10 border-green-500/30 text-green-400"
                         : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
                     }`}
             >
-                <MaterialIcon name={copied ? "check" : "content_copy"} className="text-lg" />
+                <MaterialIcon name={copied ? "check" : "content_copy"} className="text-lg" aria-hidden="true" />
                 {copied ? "Copied!" : "Copy JSON"}
             </button>
         </div>
