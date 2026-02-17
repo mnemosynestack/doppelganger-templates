@@ -1,0 +1,7 @@
+{
+  "databases": [
+    "_aiven",
+    "defaultdb"
+  ],
+  "tables": []
+}

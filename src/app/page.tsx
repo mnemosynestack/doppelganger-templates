@@ -1,64 +1,79 @@
-import Image from "next/image";
+import { Hero } from "@/components/Hero";
+import { Sidebar } from "@/components/Sidebar";
+import { PresetGrid } from "@/components/PresetGrid";
+import { CTASection } from "@/components/CTASection";
+import { query } from "@/lib/db";
+import { unstable_noStore as noStore } from 'next/cache';
 
-export default function Home() {
+async function getPresets(category?: string, sort?: string, search?: string) {
+  noStore(); // Disable caching for now to see updates immediately
+  try {
+    let orderBy = 'downloads DESC';
+    if (sort === 'newest') {
+      orderBy = 'created_at DESC';
+    } else if (sort === 'oldest') {
+      orderBy = 'created_at ASC';
+    }
+
+    const { rows } = await query(`SELECT * FROM presets ORDER BY ${orderBy}`);
+
+    // Calculate counts (always based on full dataset)
+    const counts: Record<string, number> = { "All Presets": rows.length };
+    rows.forEach((row: any) => {
+      const cat = row.category || "QA Testing"; // Default for legacy data
+      counts[cat] = (counts[cat] || 0) + 1;
+    });
+
+    // Filter rows if category is provided
+    let filteredRows = category && category !== "All Presets"
+      ? rows.filter((r: any) => (r.category || "QA Testing") === category)
+      : rows;
+
+    // Search filter
+    if (search && search.trim()) {
+      const q = search.toLowerCase();
+      filteredRows = filteredRows.filter((r: any) =>
+        (r.title || "").toLowerCase().includes(q) ||
+        (r.description || "").toLowerCase().includes(q)
+      );
+    }
+
+    const presets = filteredRows.map((row: unknown) => {
+      const r = row as any;
+      return {
+        id: r.id,
+        title: r.title,
+        author: r.author_name || "Unknown",
+        description: r.description,
+        downloads: String(r.downloads || "0"),
+        time: r.time_estimate || "—",
+        type: r.type as "SCRAPE" | "AGENT",
+        icon: r.target_url || "google.com" // Fallback to google so we get a generic icon or we should handle empty string in Card.
+      };
+    });
+
+    return { presets, counts };
+  } catch (error) {
+    console.error("Failed to fetch presets:", error);
+    return { presets: [], counts: {} };
+  }
+}
+
+export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, sort?: string, search?: string }> }) {
+  const { category, sort, search } = await searchParams;
+  const { presets, counts } = await getPresets(category, sort, search);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="text-foreground font-sans selection:bg-green-500/30 selection:text-green-200">
+      <main className="max-w-[1400px] mx-auto">
+        <Hero />
+
+        <div className="flex flex-col md:flex-row gap-12 px-6 py-8">
+          <Sidebar counts={counts} />
+          <PresetGrid presets={presets} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        <CTASection />
       </main>
     </div>
   );
