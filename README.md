@@ -25,6 +25,12 @@ Doppelganger Templates is an open marketplace where users can share and discover
 | 🛒 Shopping | Price tracking and product monitoring |
 | 📊 Monitoring | Uptime checks and change detection |
 
+## Open Source & Self-Hosting
+
+This project is open source primarily for transparency and to allow the community to audit the code. While the code is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE), which permits self-hosting and modification, please note that **this project is not designed or optimized for self-hosting**.
+
+We do not provide documentation, support, or tooling for self-hosting instances of Doppelganger Templates. You are free to fork, modify, and host your own version in accordance with the AGPL license, but you do so at your own risk and without expectation of assistance.
+
 ## Contributing
 
 Submit presets directly through the platform at [templates.doppelgangerdev.com](https://templates.doppelgangerdev.com), or open a pull request.
