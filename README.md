@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Doppelganger Templates
 
-## Getting Started
+The community-powered automation presets hub for [Doppelganger](https://doppelgangerdev.com) — browse, share, and download pre-built automation workflows.
 
-First, run the development server:
+🌐 **[templates.doppelgangerdev.com](https://templates.doppelgangerdev.com)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## What is this?
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Doppelganger Templates is an open marketplace where users can share and discover automation presets. Each preset is a ready-to-use configuration that can be imported directly into Doppelganger to automate tasks like web scraping, QA testing, lead generation, and more.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Browse Presets** — Search and filter community-submitted automation workflows by category
+- **Download Configs** — Download or copy preset configurations as JSON, ready to import
+- **Submit Presets** — Share your own automation workflows with the community
+- **Creator Dashboard** — Manage your submitted presets and track downloads
 
-## Learn More
+## Categories
 
-To learn more about Next.js, take a look at the following resources:
+| Category | Description |
+|---|---|
+| 🧪 QA Testing | Automated test flows and site audits |
+| 👥 Lead Gen | Contact scraping and outreach automation |
+| 📱 Social Media | Social platform monitoring and posting |
+| 🛒 Shopping | Price tracking and product monitoring |
+| 📊 Monitoring | Uptime checks and change detection |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Submit presets directly through the platform at [templates.doppelgangerdev.com](https://templates.doppelgangerdev.com), or open a pull request.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [LICENSE](LICENSE) for details.
