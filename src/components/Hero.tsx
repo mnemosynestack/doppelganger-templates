@@ -30,15 +30,16 @@ export function Hero() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="z-10 flex flex-col items-center">
-                <div className="mb-8 p-0.5 rounded-full bg-linear-to-r from-green-500/20 to-green-500/0">
-                    <div className="bg-[#0a0a0a] px-3 py-1 rounded-full border border-green-900/30 flex items-center gap-2">
+                <div className="mb-8 relative rounded-full overflow-hidden p-[1px]">
+                    <div className="absolute inset-[-100%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#22c55e_100%)]" />
+                    <div className="relative bg-[#0a0a0a] px-3 py-1 rounded-full border border-green-900/30 flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                         <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/80">Community Powered</span>
                     </div>
                 </div>
 
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-                    Automation <span className="text-muted-foreground">Presets Hub</span>
+                    Doppelganger <span className="text-muted-foreground">Templates</span>
                 </h1>
 
                 <p className="text-muted-foreground max-w-xl text-lg mb-10 leading-relaxed">
