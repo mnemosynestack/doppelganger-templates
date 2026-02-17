@@ -38,7 +38,7 @@ export function Hero() {
                 </div>
 
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-                    Automation <span className="text-muted-foreground">Presets Hub</span>
+                    Doppelganger <span className="text-muted-foreground">Templates</span>
                 </h1>
 
                 <p className="text-muted-foreground max-w-xl text-lg mb-10 leading-relaxed">
