@@ -16,8 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Doppelganger",
-  description: "Automation Presets Hub",
+  title: {
+    default: "Doppelganger Templates — Community Automation Presets",
+    template: "%s | Doppelganger Templates",
+  },
+  description: "Browse, share, and download community-built automation presets for Doppelganger.",
 };
 
 export default function RootLayout({

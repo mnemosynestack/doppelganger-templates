@@ -3,11 +3,18 @@ import { notFound } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
 import Link from "next/link";
 import DownloadButton from "@/components/DownloadButton";
+import type { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{ id: string }>;
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { id } = await params;
+    const { rows } = await query('SELECT title FROM presets WHERE id = $1', [id]);
+    if (rows.length === 0) return { title: "Preset Not Found" };
+    return { title: rows[0].title };
+}
 async function getPreset(id: string) {
     const { rows } = await query('SELECT * FROM presets WHERE id = $1', [id]);
     if (rows.length === 0) return null;
