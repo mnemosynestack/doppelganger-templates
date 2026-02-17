@@ -15,6 +15,42 @@ Doppelganger Templates is an open marketplace where users can share and discover
 - **Submit Presets** — Share your own automation workflows with the community
 - **Creator Dashboard** — Manage your submitted presets and track downloads
 
+## How It Works
+
+Doppelganger Templates simplifies the sharing of automation configurations.
+
+1. **Browse**: Users explore categories like "Lead Gen" or "QA Testing" to find relevant presets.
+2. **Download**: Each preset includes a JSON configuration file. Clicking "Download" saves this file locally, or users can copy the JSON directly.
+3. **Import**: The downloaded JSON file is imported into the **Doppelganger** desktop application, instantly configuring the tool with the selected workflow.
+
+## Architecture & Tech Stack
+
+The platform is built as a modern, full-stack web application designed for performance and simplicity.
+
+### Core Stack
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+
+### Key Libraries
+- **Authentication**: Custom implementation using `bcrypt` for password hashing and `jose` for JWT handling.
+- **Database Access**: `pg` (node-postgres) for direct SQL queries.
+- **Validation**: `zod` for schema validation.
+- **UI Components**: Custom components with `lucide-react` for icons.
+
+## Under the Hood
+
+### Database Schema
+The application uses a relational database model centered around users and presets.
+- **Users**: Stores account information, including email, hashed passwords, and verification status.
+- **Presets**: The core entity, containing the automation configuration (JSON), metadata (title, description, author), and performance metrics (downloads).
+- **Verification Tokens**: Handles secure email verification flows.
+
+### Performance
+- **Server-Side Rendering (SSR)**: Leveraging Next.js App Router for fast initial loads and SEO.
+- **Optimized Queries**: Direct SQL execution ensures low-latency data retrieval for search and filtering.
+
 ## Categories
 
 | Category | Description |
