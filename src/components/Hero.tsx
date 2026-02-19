@@ -19,9 +19,9 @@ export function Hero() {
         if (value.trim()) {
             params.set("search", value);
         } else {
-            params.delete("search");
+            params.set("q", query);
         }
-        router.push(`/?${params.toString()}`);
+        router.push(`/?${params.toString()}`, { scroll: false });
     };
 
     return (

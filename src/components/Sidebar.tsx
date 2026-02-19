@@ -32,7 +32,7 @@ export function Sidebar({ counts }: SidebarProps) {
         } else {
             params.set("category", categoryName);
         }
-        router.push(`/?${params.toString()}`);
+        router.push(`/?${params.toString()}`, { scroll: false });
     };
 
     const categories = [

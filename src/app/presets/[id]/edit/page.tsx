@@ -117,7 +117,7 @@ export default function EditPresetPage() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12">
-            <div className="w-full max-w-4xl p-8 bg-[#0a0a0a] border border-[#262626] rounded-xl">
+            <div className="w-full max-w-6xl p-10 bg-[#0a0a0a] border border-[#262626] rounded-xl">
                 <h1 className="text-2xl font-bold mb-6">Edit Preset</h1>
 
                 {error && (
@@ -128,7 +128,7 @@ export default function EditPresetPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Left Column: Configuration */}
                         <div className="space-y-4">
                             <div>
@@ -217,6 +217,12 @@ export default function EditPresetPage() {
                                     className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors"
                                     value={formData.time_estimate}
                                     onChange={(e) => setFormData({ ...formData, time_estimate: e.target.value })}
+                                    onBlur={(e) => {
+                                        const val = e.target.value.trim();
+                                        if (/^\d+$/.test(val)) {
+                                            setFormData({ ...formData, time_estimate: `${val}s` });
+                                        }
+                                    }}
                                 />
                             </div>
 

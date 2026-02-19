@@ -20,6 +20,7 @@ export default function NewPresetPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [jsonError, setJsonError] = useState("");
+    const [generating, setGenerating] = useState(false);
     const router = useRouter();
 
     const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -36,18 +37,73 @@ export default function NewPresetPage() {
             if (!json.url || typeof json.url !== "string") throw new Error("Missing 'url' field");
             if (!json.mode || (json.mode !== "agent" && json.mode !== "scrape")) throw new Error("Invalid 'mode' (must be 'agent' or 'scrape')");
 
+            // Redact 'versions' recursively
+            const deepRedactVersions = (obj: any) => {
+                if (!obj || typeof obj !== 'object') return;
+                if (Array.isArray(obj)) {
+                    for (let i = 0; i < obj.length; i++) {
+                        deepRedactVersions(obj[i]);
+                    }
+                } else {
+                    if ('versions' in obj) {
+                        obj.versions = [];
+                    }
+                    for (const key of Object.keys(obj)) {
+                        deepRedactVersions(obj[key]);
+                    }
+                }
+            };
+
+            deepRedactVersions(json);
+            const redactedValue = JSON.stringify(json, null, 2);
+
             // Auto-fill fields
             setFormData(prev => ({
                 ...prev,
                 title: json.name || prev.title,
                 type: json.mode === "agent" ? "AGENT" : "SCRAPE",
-                configuration: value // Ensure config is kept
+                configuration: redactedValue // Ensure config is kept, now redacted
             }));
 
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setJsonError(err.message);
             }
+        }
+    };
+
+    const handleAutoFill = async () => {
+        if (!formData.configuration.trim() || jsonError) return;
+        setGenerating(true);
+        setError("");
+
+        try {
+            const res = await fetch("/api/presets/generate-meta", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ configuration: formData.configuration }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || "Failed to generate metadata");
+            }
+
+            const data = await res.json();
+            setFormData(prev => ({
+                ...prev,
+                title: data.title || prev.title,
+                description: data.description || prev.description,
+                category: data.category || prev.category
+            }));
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("An unknown error occurred during auto-fill");
+            }
+        } finally {
+            setGenerating(false);
         }
     };
 
@@ -101,7 +157,7 @@ export default function NewPresetPage() {
 
     return (
         <div className="flex flex-col items-center justify-center py-12 px-4">
-            <div className="w-full max-w-4xl p-8 bg-[#0a0a0a] border border-[#262626] rounded-xl">
+            <div className="w-full max-w-6xl p-10 bg-[#0a0a0a] border border-[#262626] rounded-xl">
                 <h1 className="text-2xl font-bold mb-6">Submit a new Preset</h1>
 
                 {error && (
@@ -112,13 +168,24 @@ export default function NewPresetPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Left Column: Configuration */}
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
-                                    Task Configuration (JSON)
-                                </label>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                        Task Configuration (JSON)
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={handleAutoFill}
+                                        disabled={generating || !formData.configuration.trim() || !!jsonError}
+                                        className="text-xs flex items-center gap-1 text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-purple-500/10 hover:bg-purple-500/20 px-2 py-1 rounded border border-purple-500/20"
+                                    >
+                                        <MaterialIcon name="auto_awesome" className={`text-sm ${generating ? 'animate-pulse' : ''}`} />
+                                        {generating ? "Auto-filling..." : "Auto-fill with AI"}
+                                    </button>
+                                </div>
                                 <p className="text-xs text-muted-foreground mb-2">Paste your task JSON here. Title and Type will be auto-filled.</p>
                                 <textarea
                                     required
@@ -191,6 +258,25 @@ export default function NewPresetPage() {
                                     className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors resize-none"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+                                    Time Estimate
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors"
+                                    value={formData.time_estimate}
+                                    onChange={(e) => setFormData({ ...formData, time_estimate: e.target.value })}
+                                    onBlur={(e) => {
+                                        const val = e.target.value.trim();
+                                        if (/^\d+$/.test(val)) {
+                                            setFormData({ ...formData, time_estimate: `${val}s` });
+                                        }
+                                    }}
                                 />
                             </div>
 

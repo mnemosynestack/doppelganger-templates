@@ -39,12 +39,13 @@ export function PresetGrid({ presets }: PresetGridProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentSort = searchParams.get("sort") || "popular";
+    const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newSort = e.target.value;
         const params = new URLSearchParams(searchParams.toString());
         params.set("sort", newSort);
-        router.push(`/?${params.toString()}`);
+        router.push(`/?${params.toString()}`, { scroll: false });
     };
 
     return (
@@ -79,11 +80,13 @@ export function PresetGrid({ presets }: PresetGridProps) {
 
                     {/* Pagination Controls match original design */}
                     <div className="flex justify-center items-center gap-2">
-                        <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors disabled:opacity-50" aria-label="Previous page">
-                            &lt;
-                        </button>
+                        {currentPage > 1 && (
+                            <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors disabled:opacity-50" aria-label="Previous page">
+                                &lt;
+                            </button>
+                        )}
                         <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-black font-medium" aria-current="page">
-                            1
+                            {currentPage}
                         </button>
                         {/* ... other standard pagination buttons ... */}
                     </div>

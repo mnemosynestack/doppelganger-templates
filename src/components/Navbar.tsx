@@ -24,15 +24,24 @@ export async function Navbar() {
                 </Link>
             </div>
 
-            <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium">
-                {isLoggedIn && (
-                    <Link href="/dashboard" className="hover:text-foreground transition-colors">
-                        Dashboard
-                    </Link>
-                )}
+            <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium flex-1 justify-center">
+                <a href="https://doppelgangerdev.com/docs" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                    Docs
+                </a>
+                <a href="https://doppelgangerdev.com/blog" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                    Blog
+                </a>
+                <a href="https://doppelgangerdev.com/releases" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                    Releases
+                </a>
             </div>
 
             <div className="flex items-center gap-4">
+                {isLoggedIn && (
+                    <Link href="/dashboard" className="text-sm font-medium text-foreground hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-[#121212]">
+                        Creator Dashboard
+                    </Link>
+                )}
                 <GithubStarPill />
                 {isLoggedIn ? (
                     <SignOutButton />

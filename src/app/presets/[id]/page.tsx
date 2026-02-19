@@ -30,6 +30,22 @@ export default async function ViewPresetPage({ params }: PageProps) {
         notFound();
     }
 
+    const deepRedactVersions = (obj: any) => {
+        if (!obj || typeof obj !== 'object') return;
+        if (Array.isArray(obj)) {
+            for (let i = 0; i < obj.length; i++) {
+                deepRedactVersions(obj[i]);
+            }
+        } else {
+            if ('versions' in obj) {
+                obj.versions = [];
+            }
+            for (const key of Object.keys(obj)) {
+                deepRedactVersions(obj[key]);
+            }
+        }
+    };
+
     let config: any = {};
     try {
         if (typeof preset.configuration === 'string') {
@@ -37,6 +53,8 @@ export default async function ViewPresetPage({ params }: PageProps) {
         } else if (typeof preset.configuration === 'object') {
             config = preset.configuration;
         }
+
+        deepRedactVersions(config);
     } catch { }
 
     return (
