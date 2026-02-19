@@ -37,10 +37,11 @@ export async function Navbar() {
                 {isLoggedIn ? (
                     <SignOutButton />
                 ) : (
-                    <Link href="/auth/signin">
-                        <button className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">
-                            Sign In
-                        </button>
+                    <Link
+                        href="/auth/signin"
+                        className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors inline-block"
+                    >
+                        Sign In
                     </Link>
                 )}
             </div>
