@@ -89,6 +89,48 @@ export default async function ViewPresetPage({ params }: PageProps) {
                             </p>
                         </section>
 
+                        {config.variables && Object.keys(config.variables).length > 0 && (
+                            <section>
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                    <MaterialIcon name="data_object" className="text-muted-foreground" />
+                                    Variables
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {Object.entries(config.variables).map(([key, variable]: [string, any]) => (
+                                        <div key={key} className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 relative group hover:border-zinc-700 transition-colors">
+                                            <div className="absolute top-0 left-0 bottom-0 w-1 bg-blue-500/50 group-hover:bg-blue-500 transition-colors" />
+                                            <div className="pl-2">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="font-mono text-sm font-bold text-foreground">{key}</span>
+                                                    <span className="text-xs bg-[#121212] border border-[#262626] px-2 py-0.5 rounded text-muted-foreground uppercase">{variable.type || "string"}</span>
+                                                </div>
+                                                <p className="text-sm text-muted-foreground break-all bg-[#121212] px-3 py-2 rounded border border-[#262626]">
+                                                    {variable.value || "No default value"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {config.selector && (
+                            <section>
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                    <MaterialIcon name="my_location" className="text-muted-foreground" />
+                                    Target Selector
+                                </h2>
+                                <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 relative group hover:border-zinc-700 transition-colors">
+                                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-pink-500/50 group-hover:bg-pink-500 transition-colors" />
+                                    <div className="pl-2">
+                                        <code className="text-sm text-pink-400 font-mono">
+                                            {config.selector}
+                                        </code>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
+
                         <section>
                             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                                 <MaterialIcon name="account_tree" className="text-muted-foreground" />
@@ -96,7 +138,7 @@ export default async function ViewPresetPage({ params }: PageProps) {
                             </h2>
                             <div className="space-y-4">
                                 {/* Visualize Steps */}
-                                {config.actions && Array.isArray(config.actions) ? (
+                                {config.actions && Array.isArray(config.actions) && config.actions.length > 0 ? (
                                     config.actions.map((action: any, i: number) => (
                                         <div key={i} className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 relative overflow-hidden group hover:border-zinc-700 transition-colors">
                                             <div className="absolute top-0 left-0 bottom-0 w-1 bg-zinc-800 group-hover:bg-white transition-colors" />
@@ -109,12 +151,12 @@ export default async function ViewPresetPage({ params }: PageProps) {
                                                         {action.type || "Unknown Action"}
                                                     </h3>
                                                     {action.selector && (
-                                                        <code className="text-xs bg-[#121212] px-1.5 py-0.5 rounded text-blue-400 font-mono block w-fit">
+                                                        <code className="text-xs bg-[#121212] border border-[#262626] px-2 py-0.5 rounded text-blue-400 font-mono block w-fit mt-1">
                                                             {action.selector}
                                                         </code>
                                                     )}
                                                     {action.value && (
-                                                        <p className="text-sm text-muted-foreground">
+                                                        <p className="text-sm text-muted-foreground mt-1">
                                                             Value: <span className="text-foreground">{action.value}</span>
                                                         </p>
                                                     )}
@@ -129,6 +171,23 @@ export default async function ViewPresetPage({ params }: PageProps) {
                                 )}
                             </div>
                         </section>
+                        
+                        {config.extractionScript && (
+                            <section>
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                    <MaterialIcon name="code" className="text-muted-foreground" />
+                                    Extraction Script
+                                </h2>
+                                <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 relative group hover:border-zinc-700 transition-colors overflow-x-auto">
+                                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-green-500/50 group-hover:bg-green-500 transition-colors" />
+                                    <div className="pl-2">
+                                        <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap">
+                                            {config.extractionScript}
+                                        </pre>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
                     </div>
 
                     {/* Sidebar: Metadata */}
