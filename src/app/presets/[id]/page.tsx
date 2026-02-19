@@ -4,6 +4,7 @@ import MaterialIcon from "@/components/MaterialIcon";
 import Link from "next/link";
 import DownloadButton from "@/components/DownloadButton";
 import type { Metadata } from "next";
+import CodeBlock from "@/components/CodeBlock";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -171,19 +172,17 @@ export default async function ViewPresetPage({ params }: PageProps) {
                                 )}
                             </div>
                         </section>
-                        
+
                         {config.extractionScript && (
                             <section>
                                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                                     <MaterialIcon name="code" className="text-muted-foreground" />
                                     Extraction Script
                                 </h2>
-                                <div className="bg-[#0a0a0a] border border-[#262626] rounded-lg p-4 relative group hover:border-zinc-700 transition-colors overflow-x-auto">
-                                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-green-500/50 group-hover:bg-green-500 transition-colors" />
-                                    <div className="pl-2">
-                                        <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap">
-                                            {config.extractionScript}
-                                        </pre>
+                                <div className="bg-[#1e1e1e] border border-[#262626] rounded-lg relative group hover:border-zinc-700 transition-colors overflow-hidden">
+                                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-green-500/50 group-hover:bg-green-500 transition-colors z-10" />
+                                    <div className="pl-1">
+                                        <CodeBlock code={config.extractionScript} language="javascript" />
                                     </div>
                                 </div>
                             </section>
