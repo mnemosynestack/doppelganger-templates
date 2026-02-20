@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
-import { useState } from "react";
+import { useState, memo } from "react";
 
 export interface PresetProps {
     id: string; // Added ID
@@ -32,7 +32,9 @@ function PresetIcon({ icon }: { icon: string }) {
     );
 }
 
-export function PresetCard({ id, title, description, author, downloads, time, type, icon }: PresetProps) {
+// Use React.memo to prevent unnecessary re-renders of individual cards when the parent grid updates
+// (e.g. during client-side sorting/filtering) since all props are primitives.
+export const PresetCard = memo(function PresetCard({ id, title, description, author, downloads, time, type, icon }: PresetProps) {
     return (
         <div className="group bg-[#0a0a0a] border border-[#262626] rounded-xl p-5 hover:border-zinc-700 transition-all flex flex-col h-full relative overflow-hidden">
             {/* Hover glow effect */}
@@ -79,4 +81,4 @@ export function PresetCard({ id, title, description, author, downloads, time, ty
             </div>
         </div>
     );
-}
+});
