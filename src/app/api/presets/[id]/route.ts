@@ -11,7 +11,8 @@ const updatePresetSchema = z.object({
     category: z.enum(['QA Testing', 'Lead Gen', 'Social Media', 'Shopping', 'Monitoring']).optional(),
     icon: z.string().optional(),
     time_estimate: z.string().optional(),
-    configuration: z.string().optional(), // Should add refine validation if time permits, but relying on client for now or previous logic
+    configuration: z.string().optional(),
+    expected_output: z.string().optional(),
 });
 
 // GET Single Preset
@@ -84,7 +85,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             return NextResponse.json({ error: (result.error as any).errors[0].message }, { status: 400 });
         }
 
-        const { title, description, type, category, icon, time_estimate, configuration } = result.data;
+        const { title, description, type, category, icon, time_estimate, configuration, expected_output } = result.data;
 
         // Build dynamic query
         const fields = [];
@@ -97,6 +98,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         if (category) { fields.push(`category = $${idx++}`); values.push(category); }
         if (icon) { fields.push(`icon = $${idx++}`); values.push(icon); }
         if (time_estimate) { fields.push(`time_estimate = $${idx++}`); values.push(time_estimate); }
+        if (expected_output !== undefined) { fields.push(`expected_output = $${idx++}`); values.push(expected_output); }
 
         // Handle config URL extraction if config changed
         if (configuration) {

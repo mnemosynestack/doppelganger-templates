@@ -18,6 +18,7 @@ export default function EditPresetPage() {
         icon: "",
         time_estimate: "5s",
         configuration: "",
+        expected_output: "",
     });
     const [loading, setLoading] = useState(true); // Start loading to fetch data
     const [submitting, setSubmitting] = useState(false);
@@ -43,6 +44,7 @@ export default function EditPresetPage() {
                     category: data.category || "QA Testing",
                     icon: data.icon || "",
                     time_estimate: data.time_estimate || "5s",
+                    expected_output: data.expected_output || "",
                     configuration: typeof data.configuration === 'object'
                         ? JSON.stringify(data.configuration, null, 2)
                         : (data.configuration || ""),
@@ -116,8 +118,8 @@ export default function EditPresetPage() {
     if (loading) return <div className="flex justify-center p-12">Loading...</div>;
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12">
-            <div className="w-full max-w-6xl p-10 bg-[#0a0a0a] border border-[#262626] rounded-xl">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-8 md:py-12">
+            <div className="w-full max-w-6xl p-6 md:p-10 bg-[#0a0a0a] border border-[#262626] rounded-xl">
                 <h1 className="text-2xl font-bold mb-6">Edit Preset</h1>
 
                 {error && (
@@ -204,6 +206,20 @@ export default function EditPresetPage() {
                                     className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors resize-none"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="flex text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide justify-between">
+                                    <span>Expected Output</span>
+                                    <span className="text-zinc-500 font-normal normal-case">Optional</span>
+                                </label>
+                                <textarea
+                                    rows={4}
+                                    placeholder="Paste expected JSON, HTML, or CSV output here..."
+                                    className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground font-mono text-xs focus:outline-none focus:border-zinc-700 transition-colors resize-none"
+                                    value={formData.expected_output}
+                                    onChange={(e) => setFormData({ ...formData, expected_output: e.target.value })}
                                 />
                             </div>
 

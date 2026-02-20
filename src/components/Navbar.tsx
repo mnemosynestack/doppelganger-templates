@@ -10,7 +10,7 @@ export async function Navbar() {
     const isLoggedIn = !!token;
 
     return (
-        <nav className="flex items-center justify-between px-6 py-4 border-b border-border bg-background/50 backdrop-blur-md sticky top-0 z-50">
+        <nav className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-border bg-background/50 backdrop-blur-md sticky top-0 z-50">
             <div className="flex items-center gap-2">
                 <Link href="/">
                     <Image
@@ -38,11 +38,13 @@ export async function Navbar() {
 
             <div className="flex items-center gap-4">
                 {isLoggedIn && (
-                    <Link href="/dashboard" className="text-sm font-medium text-foreground hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-[#121212]">
+                    <Link href="/dashboard" className="hidden sm:block text-sm font-medium text-foreground hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-[#121212]">
                         Creator Dashboard
                     </Link>
                 )}
-                <GithubStarPill />
+                <div className="hidden sm:block">
+                    <GithubStarPill />
+                </div>
                 {isLoggedIn ? (
                     <SignOutButton />
                 ) : (

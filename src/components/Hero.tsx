@@ -25,7 +25,7 @@ export function Hero() {
     };
 
     return (
-        <div className="flex flex-col items-center text-center py-20 px-4 relative overflow-hidden">
+        <div className="flex flex-col items-center text-center py-12 md:py-20 px-4 relative overflow-hidden">
             {/* Background glow effect */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
 

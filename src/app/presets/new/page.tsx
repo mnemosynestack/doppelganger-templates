@@ -157,8 +157,8 @@ export default function NewPresetPage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center py-12 px-4">
-            <div className="w-full max-w-6xl p-10 bg-[#0a0a0a] border border-[#262626] rounded-xl">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] py-8 md:py-12">
+            <div className="w-full max-w-6xl p-6 md:p-10 bg-[#0a0a0a] border border-[#262626] rounded-xl">
                 <h1 className="text-2xl font-bold mb-6">Submit a new Preset</h1>
 
                 {error && (

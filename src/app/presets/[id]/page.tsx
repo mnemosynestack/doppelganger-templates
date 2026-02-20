@@ -32,12 +32,12 @@ export default async function ViewPresetPage({ params }: PageProps) {
     }
 
     const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
+    const token = cookieStore.get("token")?.value;
     let isAuthenticated = false;
 
     if (token) {
         const decoded = await verifyToken(token);
-        isAuthenticated = !!(decoded && decoded.userId);
+        isAuthenticated = !!(decoded && decoded.sub);
     }
 
     const deepRedactVersions = (obj: any) => {
@@ -89,16 +89,42 @@ export default async function ViewPresetPage({ params }: PageProps) {
             // CSV parsing
             const rows = trimmed.split('\n').filter(r => r.trim());
             if (rows.length === 0) return null;
-            const headers = rows[0].split(',').map(h => h.trim());
-            const dataRows = rows.slice(1).map(r => r.split(',').map(c => c.trim()));
+
+            // Simple regex parser for basic quoted CSV
+            const parseCSVRow = (row: string) => {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    if (char === '"' && row[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                result.push(current);
+                return result.map(s => s.trim());
+            };
+
+            const headers = parseCSVRow(rows[0]);
+            const dataRows = rows.slice(1).map(r => parseCSVRow(r));
 
             return (
                 <div className="mt-2 overflow-x-auto border border-[#262626] rounded-lg">
-                    <table className="w-full text-left text-sm text-muted-foreground whitespace-nowrap">
-                        <thead className="bg-[#121212] text-foreground text-xs uppercase border-b border-[#262626]">
+                    <table className="w-full text-left text-xs text-muted-foreground min-w-max">
+                        <thead className="bg-[#121212] text-foreground uppercase border-b border-[#262626]">
                             <tr>
                                 {headers.map((h, i) => (
-                                    <th key={i} className="px-4 py-3 font-medium">{h}</th>
+                                    <th key={i} className="px-4 py-3 font-medium border-r border-[#262626]/50 last:border-0 min-w-[150px] max-w-[300px] whitespace-normal">
+                                        {h}
+                                    </th>
                                 ))}
                             </tr>
                         </thead>
@@ -106,7 +132,11 @@ export default async function ViewPresetPage({ params }: PageProps) {
                             {dataRows.map((row, i) => (
                                 <tr key={i} className="border-b border-[#262626] last:border-0 hover:bg-[#121212]/50 transition-colors">
                                     {row.map((cell, j) => (
-                                        <td key={j} className="px-4 py-3">{cell}</td>
+                                        <td key={j} className="px-4 py-3 border-r border-[#262626]/50 last:border-0 align-top min-w-[150px] max-w-[300px] whitespace-normal break-words">
+                                            <div className="line-clamp-3" title={cell}>
+                                                {cell}
+                                            </div>
+                                        </td>
                                     ))}
                                 </tr>
                             ))}
@@ -126,11 +156,11 @@ export default async function ViewPresetPage({ params }: PageProps) {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-8 border-b border-[#262626]">
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-xl bg-[#121212] border border-[#262626] flex items-center justify-center overflow-hidden">
+                            <div className="w-16 h-16 flex items-center justify-center overflow-hidden">
                                 {preset.target_url ? (
-                                    <img src={`https://www.google.com/s2/favicons?domain=${preset.target_url}&sz=64`} className="w-8 h-8" alt="Icon" />
+                                    <img src={`https://www.google.com/s2/favicons?domain=${preset.target_url}&sz=64`} className="w-12 h-12" alt="Icon" />
                                 ) : (
-                                    <MaterialIcon name="extension" className="text-3xl text-muted-foreground" />
+                                    <MaterialIcon name="extension" className="text-5xl text-muted-foreground" />
                                 )}
                             </div>
                             <div>
@@ -211,6 +241,69 @@ export default async function ViewPresetPage({ params }: PageProps) {
                                 </div>
                             </section>
                         )}
+
+                        {/* Behavior & Execution Config */}
+                        {(
+                            config.wait !== undefined ||
+                            config.rotateUserAgents !== undefined ||
+                            config.rotateProxies !== undefined ||
+                            config.rotateViewport !== undefined ||
+                            config.humanTyping !== undefined ||
+                            config.includeShadowDom !== undefined ||
+                            config.disableRecording !== undefined ||
+                            config.statelessExecution !== undefined ||
+                            config.stealth
+                        ) && (
+                                <section>
+                                    <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                        <MaterialIcon name="settings" className="text-muted-foreground" />
+                                        Behavior & Action Config
+                                    </h2>
+                                    <div className="bg-[#0a0a0a] border border-[#262626] rounded-xl p-6 relative overflow-hidden">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 text-sm">
+                                            {[
+                                                { key: 'wait', label: 'Wait Time (ms)' },
+                                                { key: 'rotateUserAgents', label: 'Rotate UA' },
+                                                { key: 'rotateProxies', label: 'Rotate Proxies' },
+                                                { key: 'rotateViewport', label: 'Rotate Viewport' },
+                                                { key: 'humanTyping', label: 'Human Typing' },
+                                                { key: 'includeShadowDom', label: 'Shadow DOM' },
+                                                { key: 'disableRecording', label: 'Disable Recording' },
+                                                { key: 'statelessExecution', label: 'Stateless Exec' }
+                                            ].map((cfg) => {
+                                                if (config[cfg.key] === undefined) return null;
+                                                const val = config[cfg.key];
+                                                const isTrue = val === true;
+                                                return (
+                                                    <div key={cfg.key} className="flex flex-col gap-1">
+                                                        <span className="text-xs text-muted-foreground tracking-wide font-medium">{cfg.label}</span>
+                                                        <span className={`inline-flex w-fit items-center px-2 py-0.5 rounded text-xs font-mono font-medium border ${isTrue ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                                                            {String(val)}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {config.stealth && Object.keys(config.stealth).length > 0 && (
+                                            <div className="mt-6 pt-6 border-t border-[#262626]">
+                                                <h3 className="text-sm font-semibold text-foreground mb-4">Stealth Features</h3>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {Object.entries(config.stealth).map(([key, value]) => {
+                                                        const isTrue = value === true;
+                                                        return (
+                                                            <div key={key} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-medium ${isTrue ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' : 'bg-[#121212] border-[#262626] text-muted-foreground'}`}>
+                                                                {isTrue && <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+                                                                {key}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </section>
+                            )}
 
                         <section>
                             <h2 className="text-lg font-bold mb-4 flex items-center gap-2">

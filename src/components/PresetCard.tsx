@@ -40,7 +40,7 @@ export function PresetCard({ id, title, description, author, downloads, time, ty
 
             <div className="flex justify-between items-start mb-4">
                 <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-[#121212] border border-[#262626] flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 flex items-center justify-center overflow-hidden">
                         <PresetIcon icon={icon} />
                     </div>
                     <div>

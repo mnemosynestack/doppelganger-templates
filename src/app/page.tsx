@@ -68,7 +68,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
       <main className="max-w-[1400px] mx-auto">
         <Hero />
 
-        <div className="flex flex-col md:flex-row gap-12 px-6 py-8">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12 px-4 md:px-6 py-6 md:py-8">
           <Sidebar counts={counts} />
           <PresetGrid presets={presets} />
         </div>
