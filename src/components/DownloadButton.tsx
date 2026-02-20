@@ -63,7 +63,7 @@ export default function DownloadButton({ presetId, presetTitle, configJson, isAu
         <div className="flex gap-3">
             <button
                 onClick={() => handleAction('download')}
-                aria-label={`Download ${presetTitle} configuration`}
+                aria-label={downloaded ? "Download complete" : `Download ${presetTitle} configuration`}
                 className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${downloaded
                     ? "bg-green-500/10 border-green-500/30 text-green-400"
                     : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
@@ -74,7 +74,7 @@ export default function DownloadButton({ presetId, presetTitle, configJson, isAu
             </button>
             <button
                 onClick={() => handleAction('copy')}
-                aria-label={`Copy ${presetTitle} configuration to clipboard`}
+                aria-label={copied ? "Copied to clipboard" : `Copy ${presetTitle} configuration to clipboard`}
                 className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${copied
                     ? "bg-green-500/10 border-green-500/30 text-green-400"
                     : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
