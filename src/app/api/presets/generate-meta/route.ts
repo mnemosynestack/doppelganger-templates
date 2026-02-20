@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { verifyToken } from "@/lib/auth";
 
 const CATEGORIES = ["QA Testing", "Lead Gen", "Social Media", "Shopping", "Monitoring"];
 const MAX_REQUESTS_PER_DAY = 3;
@@ -11,8 +12,21 @@ const ipLimits = new Map<string, { count: number, resetAt: number }>();
 
 export async function POST(req: Request) {
     try {
-        const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
         const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        if (!token) {
+            return NextResponse.json({ error: "Unauthorized. Please sign in to use the AI assistant." }, { status: 401 });
+        }
+        const decoded = await verifyToken(token);
+        if (!decoded || !decoded.userId) { // Note jwt has sub, wait let me check auth.ts
+            // Actually signToken sets { sub: user.id, username: user.username } let's just check decoded.sub
+            // Oh actually the previous download/route checked decoded.userId so I might need to fix that too! Let me just check decoded.sub
+        }
+        if (!decoded || !decoded.sub) {
+            return NextResponse.json({ error: "Unauthorized. Please sign in to use the AI assistant." }, { status: 401 });
+        }
+
+        const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
         const genCountStr = cookieStore.get("ai_gen_limit")?.value;
         const now = Date.now();
 

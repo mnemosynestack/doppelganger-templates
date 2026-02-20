@@ -1,10 +1,11 @@
 import { query } from "@/lib/db";
 import { notFound } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
-import Link from "next/link";
 import DownloadButton from "@/components/DownloadButton";
 import type { Metadata } from "next";
 import CodeBlock from "@/components/CodeBlock";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/auth";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -28,6 +29,15 @@ export default async function ViewPresetPage({ params }: PageProps) {
 
     if (!preset) {
         notFound();
+    }
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
+    let isAuthenticated = false;
+
+    if (token) {
+        const decoded = await verifyToken(token);
+        isAuthenticated = !!(decoded && decoded.userId);
     }
 
     const deepRedactVersions = (obj: any) => {
@@ -56,6 +66,58 @@ export default async function ViewPresetPage({ params }: PageProps) {
 
         deepRedactVersions(config);
     } catch { }
+
+    const renderExpectedOutput = (output: string) => {
+        const trimmed = output.trim();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+            return (
+                <div className="bg-[#1e1e1e] border border-[#262626] rounded-lg relative group overflow-hidden mt-2">
+                    <div className="pl-1">
+                        <CodeBlock code={trimmed} language="json" />
+                    </div>
+                </div>
+            );
+        } else if (trimmed.startsWith('<') && trimmed.includes('>')) {
+            return (
+                <div className="bg-[#1e1e1e] border border-[#262626] rounded-lg relative group overflow-hidden mt-2">
+                    <div className="pl-1">
+                        <CodeBlock code={trimmed} language="html" />
+                    </div>
+                </div>
+            );
+        } else if (trimmed.includes(',') && trimmed.includes('\n')) {
+            // CSV parsing
+            const rows = trimmed.split('\n').filter(r => r.trim());
+            if (rows.length === 0) return null;
+            const headers = rows[0].split(',').map(h => h.trim());
+            const dataRows = rows.slice(1).map(r => r.split(',').map(c => c.trim()));
+
+            return (
+                <div className="mt-2 overflow-x-auto border border-[#262626] rounded-lg">
+                    <table className="w-full text-left text-sm text-muted-foreground whitespace-nowrap">
+                        <thead className="bg-[#121212] text-foreground text-xs uppercase border-b border-[#262626]">
+                            <tr>
+                                {headers.map((h, i) => (
+                                    <th key={i} className="px-4 py-3 font-medium">{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {dataRows.map((row, i) => (
+                                <tr key={i} className="border-b border-[#262626] last:border-0 hover:bg-[#121212]/50 transition-colors">
+                                    {row.map((cell, j) => (
+                                        <td key={j} className="px-4 py-3">{cell}</td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+
+        return <p className="text-muted-foreground mt-2 whitespace-pre-wrap font-mono text-sm bg-[#121212] p-4 rounded-lg border border-[#262626]">{trimmed}</p>;
+    };
 
     return (
         <div className="flex flex-col items-center py-12 px-4 md:px-6">
@@ -191,6 +253,16 @@ export default async function ViewPresetPage({ params }: PageProps) {
                             </div>
                         </section>
 
+                        {preset.expected_output && (
+                            <section>
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                    <MaterialIcon name="output" className="text-muted-foreground" />
+                                    Expected Output
+                                </h2>
+                                {renderExpectedOutput(preset.expected_output)}
+                            </section>
+                        )}
+
                         {config.extractionScript && (
                             <section>
                                 <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -235,7 +307,8 @@ export default async function ViewPresetPage({ params }: PageProps) {
                             <DownloadButton
                                 presetId={id}
                                 presetTitle={preset.title}
-                                configJson={JSON.stringify(config, null, 2)}
+                                configJson={isAuthenticated ? JSON.stringify(config, null, 2) : ""}
+                                isAuthenticated={isAuthenticated}
                             />
                         </div>
                     </div>

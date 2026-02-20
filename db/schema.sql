@@ -38,8 +38,17 @@ CREATE TABLE IF NOT EXISTS presets (
     category TEXT,
     configuration JSONB,
     target_url TEXT,
+    expected_output TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Preset Downloads
+CREATE TABLE IF NOT EXISTS preset_downloads (
+    preset_id UUID REFERENCES presets(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (preset_id, user_id)
 );
 
 -- Index for faster queries

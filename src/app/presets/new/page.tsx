@@ -16,6 +16,7 @@ export default function NewPresetPage() {
         icon: "extension",
         time_estimate: "5s",
         configuration: "",
+        expected_output: "",
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -258,6 +259,20 @@ export default function NewPresetPage() {
                                     className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors resize-none"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="flex text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide justify-between">
+                                    <span>Expected Output</span>
+                                    <span className="text-zinc-500 font-normal normal-case">Optional</span>
+                                </label>
+                                <textarea
+                                    rows={4}
+                                    placeholder="Paste expected JSON, HTML, or CSV output here..."
+                                    className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground font-mono text-xs focus:outline-none focus:border-zinc-700 transition-colors resize-none"
+                                    value={formData.expected_output}
+                                    onChange={(e) => setFormData({ ...formData, expected_output: e.target.value })}
                                 />
                             </div>
 

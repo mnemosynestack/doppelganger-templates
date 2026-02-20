@@ -19,6 +19,7 @@ const createPresetSchema = z.object({
             return false;
         }
     }, "Invalid JSON configuration"),
+    expected_output: z.string().optional(),
 });
 
 export async function GET(req: Request) {
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: errorMessage }, { status: 400 });
         }
 
-        const { title, description, type, category, icon, time_estimate, configuration } = result.data;
+        const { title, description, type, category, icon, time_estimate, configuration, expected_output } = result.data;
 
         // Extract URL from configuration
         let targetUrl = "";
@@ -66,9 +67,9 @@ export async function POST(req: Request) {
         }
 
         await query(
-            `INSERT INTO presets (user_id, title, description, author_name, type, category, icon, time_estimate, configuration, target_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-            [payload.sub, title, description, payload.username, type, category, icon, time_estimate, configuration, targetUrl]
+            `INSERT INTO presets (user_id, title, description, author_name, type, category, icon, time_estimate, configuration, target_url, expected_output)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+            [payload.sub, title, description, payload.username, type, category, icon, time_estimate, configuration, targetUrl, expected_output]
         );
 
         return NextResponse.json({ message: 'Preset created' });

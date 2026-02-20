@@ -2,18 +2,21 @@
 
 import { useState, useRef } from "react";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useRouter } from "next/navigation";
 
 interface DownloadButtonProps {
     presetId: string;
     presetTitle: string;
     configJson: string;
+    isAuthenticated?: boolean;
 }
 
-export default function DownloadButton({ presetId, presetTitle, configJson }: DownloadButtonProps) {
+export default function DownloadButton({ presetId, presetTitle, configJson, isAuthenticated = true }: DownloadButtonProps) {
     const [copied, setCopied] = useState(false);
     const [downloaded, setDownloaded] = useState(false);
     const downloadCooldown = useRef(false);
     const copyCooldown = useRef(false);
+    const router = useRouter();
 
     const incrementDownloads = async () => {
         try {
@@ -21,61 +24,60 @@ export default function DownloadButton({ presetId, presetTitle, configJson }: Do
         } catch { }
     };
 
-    const handleDownload = async () => {
-        // Increment only if not in cooldown
-        if (!downloadCooldown.current) {
-            downloadCooldown.current = true;
-            incrementDownloads();
-            setTimeout(() => { downloadCooldown.current = false; }, 30000);
+    const handleAction = async (action: 'download' | 'copy') => {
+        if (!isAuthenticated) {
+            router.push("/auth/signin");
+            return;
         }
 
-        // Always trigger the file download
-        const blob = new Blob([configJson], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${presetTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'preset'}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        const isDownload = action === 'download';
+        const cooldownRef = isDownload ? downloadCooldown : copyCooldown;
 
-        setDownloaded(true);
-        setTimeout(() => setDownloaded(false), 2000);
-    };
-
-    const handleCopy = async () => {
-        // Increment only if not in cooldown
-        if (!copyCooldown.current) {
-            copyCooldown.current = true;
+        if (!cooldownRef.current) {
+            cooldownRef.current = true;
             incrementDownloads();
-            setTimeout(() => { copyCooldown.current = false; }, 30000);
+            setTimeout(() => { cooldownRef.current = false; }, 30000);
         }
 
-        await navigator.clipboard.writeText(configJson);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        if (isDownload) {
+            const blob = new Blob([configJson], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${presetTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'preset'}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            setDownloaded(true);
+            setTimeout(() => setDownloaded(false), 2000);
+        } else {
+            await navigator.clipboard.writeText(configJson);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
     };
 
     return (
         <div className="flex gap-3">
             <button
-                onClick={handleDownload}
+                onClick={() => handleAction('download')}
                 aria-label={`Download ${presetTitle} configuration`}
                 className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${downloaded
-                        ? "bg-green-500/10 border-green-500/30 text-green-400"
-                        : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
+                    ? "bg-green-500/10 border-green-500/30 text-green-400"
+                    : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
                     }`}
             >
                 <MaterialIcon name={downloaded ? "check" : "download"} className="text-lg" aria-hidden="true" />
                 {downloaded ? "Downloaded!" : "Download"}
             </button>
             <button
-                onClick={handleCopy}
+                onClick={() => handleAction('copy')}
                 aria-label={`Copy ${presetTitle} configuration to clipboard`}
                 className={`flex-1 flex items-center justify-center gap-2 font-medium py-2.5 rounded-lg transition-colors border cursor-pointer focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${copied
-                        ? "bg-green-500/10 border-green-500/30 text-green-400"
-                        : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
+                    ? "bg-green-500/10 border-green-500/30 text-green-400"
+                    : "bg-[#171717] hover:bg-[#262626] text-foreground border-[#262626]"
                     }`}
             >
                 <MaterialIcon name={copied ? "check" : "content_copy"} className="text-lg" aria-hidden="true" />
