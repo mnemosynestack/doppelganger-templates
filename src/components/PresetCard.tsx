@@ -21,18 +21,18 @@ function PresetIcon({ icon }: { icon: string }) {
     const isDomain = icon && icon.includes(".");
 
     if (!isDomain) {
-        return <MaterialIcon name={icon || "public"} className="text-xl text-muted-foreground" aria-hidden="true" />;
+        return <MaterialIcon name={icon || "public"} className="text-3xl text-foreground" aria-hidden="true" />;
     }
 
     if (error || !icon) {
-        return <MaterialIcon name="public" className="text-xl text-muted-foreground" aria-hidden="true" />;
+        return <MaterialIcon name="public" className="text-3xl text-foreground" aria-hidden="true" />;
     }
 
     return (
         <img
             src={`https://www.google.com/s2/favicons?domain=${icon}&sz=64`}
             alt="Favicon"
-            className="w-6 h-6 object-contain"
+            className="w-8 h-8 object-contain"
             onError={() => setError(true)}
         />
     );

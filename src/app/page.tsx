@@ -48,7 +48,7 @@ async function getPresets(category?: string, sort?: string, search?: string) {
         downloads: String(r.downloads || "0"),
         time: r.time_estimate || "—",
         type: r.type as "SCRAPE" | "AGENT",
-        icon: r.target_url || "google.com" // Fallback to google so we get a generic icon or we should handle empty string in Card.
+        icon: r.icon || r.target_url || "public"
       };
     });
 

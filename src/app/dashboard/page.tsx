@@ -12,6 +12,7 @@ interface Preset {
     created_at: string;
     downloads: number;
     target_url?: string;
+    icon?: string;
 }
 
 export default function DashboardPage() {
@@ -94,10 +95,14 @@ export default function DashboardPage() {
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded bg-[#171717] flex items-center justify-center overflow-hidden border border-[#262626]">
-                                                    {preset.target_url ? (
-                                                        <img src={`https://www.google.com/s2/favicons?domain=${preset.target_url}&sz=32`} className="w-4 h-4" />
+                                                    {preset.icon && preset.icon.includes(".") ? (
+                                                        <img src={`https://www.google.com/s2/favicons?domain=${preset.icon}&sz=32`} className="w-5 h-5 object-contain" alt="" />
+                                                    ) : preset.icon ? (
+                                                        <MaterialIcon name={preset.icon} className="text-lg text-foreground" />
+                                                    ) : preset.target_url ? (
+                                                        <img src={`https://www.google.com/s2/favicons?domain=${preset.target_url}&sz=32`} className="w-5 h-5 object-contain" alt="" />
                                                     ) : (
-                                                        <MaterialIcon name="extension" className="text-base text-muted-foreground" />
+                                                        <MaterialIcon name="extension" className="text-lg text-muted-foreground" />
                                                     )}
                                                 </div>
                                                 <span className="font-medium">{preset.title}</span>
