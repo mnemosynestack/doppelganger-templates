@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
+import { sanitizeUrl } from '@/lib/utils';
 import { z } from 'zod';
 import { cookies } from 'next/headers';
 
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
         let targetUrl = "";
         try {
             const config = JSON.parse(configuration);
-            targetUrl = config.url || "";
+            targetUrl = sanitizeUrl(config.url) || "";
         } catch {
             // Should be caught by Zod refine, but safe fallback
         }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
+import { sanitizeUrl } from '@/lib/utils';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
@@ -107,9 +108,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
             try {
                 const config = JSON.parse(configuration);
-                if (config.url) {
+                const safeUrl = sanitizeUrl(config.url);
+                if (safeUrl) {
                     fields.push(`target_url = $${idx++}`);
-                    values.push(config.url);
+                    values.push(safeUrl);
                 }
             } catch { }
         }
