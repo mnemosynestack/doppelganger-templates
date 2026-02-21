@@ -8,6 +8,17 @@ import { unstable_noStore as noStore } from 'next/cache';
 async function getPresets(category?: string, sort?: string, search?: string) {
   noStore(); // Disable caching for now to see updates immediately
   try {
+    // Optimized: Fetch counts and filtered data in parallel using SQL
+    // This replaces the previous implementation that fetched ALL rows and filtered in-memory
+
+    // 1. Fetch category counts (for Sidebar)
+    const countsPromise = query(`
+      SELECT COALESCE(NULLIF(category, ''), 'QA Testing') as category, COUNT(*) as count
+      FROM presets
+      GROUP BY 1
+    `);
+
+    // 2. Fetch filtered presets (for Grid)
     let orderBy = 'downloads DESC';
     if (sort === 'newest') {
       orderBy = 'created_at DESC';
@@ -15,30 +26,40 @@ async function getPresets(category?: string, sort?: string, search?: string) {
       orderBy = 'created_at ASC';
     }
 
-    const { rows } = await query(`SELECT * FROM presets ORDER BY ${orderBy}`);
+    const conditions: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: any[] = [];
+    let paramIndex = 1;
 
-    // Calculate counts (always based on full dataset)
-    const counts: Record<string, number> = { "All Presets": rows.length };
-    rows.forEach((row: any) => {
-      const cat = row.category || "QA Testing"; // Default for legacy data
-      counts[cat] = (counts[cat] || 0) + 1;
-    });
-
-    // Filter rows if category is provided
-    let filteredRows = category && category !== "All Presets"
-      ? rows.filter((r: any) => (r.category || "QA Testing") === category)
-      : rows;
-
-    // Search filter
-    if (search && search.trim()) {
-      const q = search.toLowerCase();
-      filteredRows = filteredRows.filter((r: any) =>
-        (r.title || "").toLowerCase().includes(q) ||
-        (r.description || "").toLowerCase().includes(q)
-      );
+    if (category && category !== "All Presets") {
+      conditions.push(`COALESCE(NULLIF(category, ''), 'QA Testing') = $${paramIndex}`);
+      params.push(category);
+      paramIndex++;
     }
 
-    const presets = filteredRows.map((row: unknown) => {
+    if (search && search.trim()) {
+      conditions.push(`(title ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`);
+      params.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const dataPromise = query(`SELECT * FROM presets ${whereClause} ORDER BY ${orderBy}`, params);
+
+    const [countsResult, dataResult] = await Promise.all([countsPromise, dataPromise]);
+
+    // Process counts
+    const counts: Record<string, number> = { "All Presets": 0 };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    countsResult.rows.forEach((row: any) => {
+      const count = Number(row.count);
+      counts[row.category] = count;
+      counts["All Presets"] += count;
+    });
+
+    // Process presets
+    const presets = dataResult.rows.map((row: unknown) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const r = row as any;
       return {
         id: r.id,
