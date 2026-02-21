@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
 
-const CATEGORIES = ["QA Testing", "Lead Gen", "Social Media", "Shopping", "Monitoring"];
+const CATEGORIES = ["QA Testing", "Lead Gen", "Social Media", "Shopping", "Monitoring", "AI", "Jobs", "News", "Videos", "Reviews", "Developer Tools", "SEO", "Real Estate", "Travel", "Other"];
 
 export default function EditPresetPage() {
     const params = useParams();

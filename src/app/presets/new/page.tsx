@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
 
 const ICONS = ["extension", "search", "public", "table_chart", "monitor", "webhook", "smart_toy", "bug_report"];
-const CATEGORIES = ["QA Testing", "Lead Gen", "Social Media", "Shopping", "Monitoring"];
+const CATEGORIES = ["QA Testing", "Lead Gen", "Social Media", "Shopping", "Monitoring", "AI", "Jobs", "News", "Videos", "Reviews", "Developer Tools", "SEO", "Real Estate", "Travel", "Other"];
 
 export default function NewPresetPage() {
     const [formData, setFormData] = useState({

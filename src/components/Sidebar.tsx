@@ -11,7 +11,17 @@ const categoryIcons: Record<string, string> = {
     "Lead Gen": "group",
     "Social Media": "share",
     "Shopping": "shopping_cart",
-    "Monitoring": "insights"
+    "Monitoring": "insights",
+    "AI": "smart_toy",
+    "Jobs": "work",
+    "News": "article",
+    "Videos": "play_circle",
+    "Reviews": "rate_review",
+    "Developer Tools": "code",
+    "SEO": "search",
+    "Real Estate": "real_estate_agent",
+    "Travel": "flight",
+    "Other": "more_horiz"
 };
 
 
@@ -42,6 +52,16 @@ export function Sidebar({ counts }: SidebarProps) {
         { name: "Social Media", count: counts["Social Media"] || 0, icon: categoryIcons["Social Media"] },
         { name: "Shopping", count: counts["Shopping"] || 0, icon: categoryIcons["Shopping"] },
         { name: "Monitoring", count: counts["Monitoring"] || 0, icon: categoryIcons["Monitoring"] },
+        { name: "AI", count: counts["AI"] || 0, icon: categoryIcons["AI"] },
+        { name: "Jobs", count: counts["Jobs"] || 0, icon: categoryIcons["Jobs"] },
+        { name: "News", count: counts["News"] || 0, icon: categoryIcons["News"] },
+        { name: "Videos", count: counts["Videos"] || 0, icon: categoryIcons["Videos"] },
+        { name: "Reviews", count: counts["Reviews"] || 0, icon: categoryIcons["Reviews"] },
+        { name: "Developer Tools", count: counts["Developer Tools"] || 0, icon: categoryIcons["Developer Tools"] },
+        { name: "SEO", count: counts["SEO"] || 0, icon: categoryIcons["SEO"] },
+        { name: "Real Estate", count: counts["Real Estate"] || 0, icon: categoryIcons["Real Estate"] },
+        { name: "Travel", count: counts["Travel"] || 0, icon: categoryIcons["Travel"] },
+        { name: "Other", count: counts["Other"] || 0, icon: categoryIcons["Other"] },
     ];
 
     return (

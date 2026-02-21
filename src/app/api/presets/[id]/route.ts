@@ -8,7 +8,7 @@ const updatePresetSchema = z.object({
     title: z.string().min(3).optional(),
     description: z.string().min(10).optional(),
     type: z.enum(['AGENT', 'SCRAPE']).optional(),
-    category: z.enum(['QA Testing', 'Lead Gen', 'Social Media', 'Shopping', 'Monitoring']).optional(),
+    category: z.enum(['QA Testing', 'Lead Gen', 'Social Media', 'Shopping', 'Monitoring', 'AI', 'Jobs', 'News', 'Videos', 'Reviews', 'Developer Tools', 'SEO', 'Real Estate', 'Travel', 'Other']).optional(),
     icon: z.string().optional(),
     time_estimate: z.string().optional(),
     configuration: z.string().optional(),
