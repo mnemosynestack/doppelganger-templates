@@ -18,6 +18,12 @@ export interface PresetProps {
 function PresetIcon({ icon }: { icon: string }) {
     const [error, setError] = useState(false);
 
+    const isDomain = icon && icon.includes(".");
+
+    if (!isDomain) {
+        return <MaterialIcon name={icon || "public"} className="text-xl text-muted-foreground" aria-hidden="true" />;
+    }
+
     if (error || !icon) {
         return <MaterialIcon name="public" className="text-xl text-muted-foreground" aria-hidden="true" />;
     }
