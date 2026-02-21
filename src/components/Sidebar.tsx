@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation"; // Changed import
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import MaterialIcon from "@/components/MaterialIcon";
 import clsx from "clsx";
 
@@ -34,6 +35,7 @@ export function Sidebar({ counts }: SidebarProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const currentCategory = searchParams.get("category") || "All Presets";
+    const [showAllCategories, setShowAllCategories] = useState(false);
 
     const handleCategoryClick = (categoryName: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -64,6 +66,8 @@ export function Sidebar({ counts }: SidebarProps) {
         { name: "Other", count: counts["Other"] || 0, icon: categoryIcons["Other"] },
     ];
 
+    const displayedCategories = showAllCategories ? categories : categories.slice(0, 6);
+
     return (
         <div className="w-full md:w-64 flex-shrink-0 space-y-8">
             <div>
@@ -76,7 +80,7 @@ export function Sidebar({ counts }: SidebarProps) {
 
                 <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4 px-2">Categories</h3>
                 <div className="space-y-1">
-                    {categories.map((category) => {
+                    {displayedCategories.map((category) => {
                         const isActive = category.name === currentCategory;
                         return (
                             <button
@@ -97,6 +101,15 @@ export function Sidebar({ counts }: SidebarProps) {
                             </button>
                         );
                     })}
+                    {categories.length > 6 && (
+                        <button
+                            onClick={() => setShowAllCategories(!showAllCategories)}
+                            className="w-full flex items-center justify-center px-3 py-2 mt-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                        >
+                            {showAllCategories ? "Show Less" : "Show More"}
+                            <MaterialIcon name={showAllCategories ? "expand_less" : "expand_more"} className="text-base ml-1" />
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
