@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import MaterialIcon from "@/components/MaterialIcon";
 import clsx from "clsx";
@@ -33,18 +33,17 @@ interface SidebarProps {
 
 export function Sidebar({ counts }: SidebarProps) {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const currentCategory = searchParams.get("category") || "All Presets";
     const [showAllCategories, setShowAllCategories] = useState(false);
 
-    const handleCategoryClick = (categoryName: string) => {
+    const getCategoryHref = (categoryName: string) => {
         const params = new URLSearchParams(searchParams.toString());
         if (categoryName === "All Presets") {
             params.delete("category");
         } else {
             params.set("category", categoryName);
         }
-        router.push(`/?${params.toString()}`, { scroll: false });
+        return `/?${params.toString()}`;
     };
 
     const categories = [
@@ -71,11 +70,12 @@ export function Sidebar({ counts }: SidebarProps) {
     return (
         <div className="w-full md:w-64 flex-shrink-0 space-y-8">
             <div>
-                <Link href="/presets/new">
-                    <button className="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] border border-[#262626] hover:border-zinc-700 text-foreground py-2.5 rounded-lg transition-all mb-8 cursor-pointer">
-                        <span className="text-xl font-thin">+</span>
-                        <span className="text-sm font-medium">Submit Preset</span>
-                    </button>
+                <Link
+                    href="/presets/new"
+                    className="w-full flex items-center justify-center gap-2 bg-[#0a0a0a] border border-[#262626] hover:border-zinc-700 text-foreground py-2.5 rounded-lg transition-all mb-8 cursor-pointer"
+                >
+                    <span className="text-xl font-thin">+</span>
+                    <span className="text-sm font-medium">Submit Preset</span>
                 </Link>
 
                 <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4 px-2">Categories</h3>
@@ -83,9 +83,10 @@ export function Sidebar({ counts }: SidebarProps) {
                     {displayedCategories.map((category) => {
                         const isActive = category.name === currentCategory;
                         return (
-                            <button
+                            <Link
                                 key={category.name}
-                                onClick={() => handleCategoryClick(category.name)}
+                                href={getCategoryHref(category.name)}
+                                scroll={false}
                                 className={clsx(
                                     "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer",
                                     isActive
@@ -94,11 +95,11 @@ export function Sidebar({ counts }: SidebarProps) {
                                 )}
                             >
                                 <div className="flex items-center gap-3">
-                                    <MaterialIcon name={category.icon} className="text-base" />
+                                    <MaterialIcon name={category.icon} className="text-base" aria-hidden="true" />
                                     <span>{category.name}</span>
                                 </div>
                                 <span className="text-xs text-muted-foreground/60">{category.count}</span>
-                            </button>
+                            </Link>
                         );
                     })}
                     {categories.length > 6 && (
@@ -107,7 +108,7 @@ export function Sidebar({ counts }: SidebarProps) {
                             className="w-full flex items-center justify-center px-3 py-2 mt-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                             {showAllCategories ? "Show Less" : "Show More"}
-                            <MaterialIcon name={showAllCategories ? "expand_less" : "expand_more"} className="text-base ml-1" />
+                            <MaterialIcon name={showAllCategories ? "expand_less" : "expand_more"} className="text-base ml-1" aria-hidden="true" />
                         </button>
                     )}
                 </div>
