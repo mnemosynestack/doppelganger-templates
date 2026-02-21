@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
-import { useState } from "react";
+import { useState, memo } from "react";
 
 export interface PresetProps {
     id: string; // Added ID
@@ -27,12 +27,18 @@ function PresetIcon({ icon }: { icon: string }) {
             src={`https://www.google.com/s2/favicons?domain=${icon}&sz=64`}
             alt="Favicon"
             className="w-6 h-6 object-contain"
+            // Optimized with loading="lazy" and explicit dimensions for performance and CLS prevention
+            loading="lazy"
+            width={24}
+            height={24}
             onError={() => setError(true)}
         />
     );
 }
 
-export function PresetCard({ id, title, description, author, downloads, time, type, icon }: PresetProps) {
+// Optimized with React.memo to prevent unnecessary re-renders when parent PresetGrid updates.
+// Props are primitives, so shallow comparison is effective.
+export const PresetCard = memo(function PresetCard({ id, title, description, author, downloads, time, type, icon }: PresetProps) {
     return (
         <div className="group bg-[#0a0a0a] border border-[#262626] rounded-xl p-5 hover:border-zinc-700 transition-all flex flex-col h-full relative overflow-hidden">
             {/* Hover glow effect */}
@@ -79,4 +85,4 @@ export function PresetCard({ id, title, description, author, downloads, time, ty
             </div>
         </div>
     );
-}
+});
