@@ -118,7 +118,7 @@ export default async function ViewPresetPage({ params }: PageProps) {
 
             return (
                 <div className="mt-2 overflow-x-auto border border-[#262626] rounded-lg">
-                    <table className="w-full text-left text-xs text-muted-foreground min-w-max">
+                    <table className="w-full text-left text-xs text-muted-foreground min-w-max wrap-break-word">
                         <thead className="bg-[#121212] text-foreground uppercase border-b border-[#262626]">
                             <tr>
                                 {headers.map((h, i) => (

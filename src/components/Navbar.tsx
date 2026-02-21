@@ -3,6 +3,7 @@ import Image from "next/image";
 import GithubStarPill from "@/components/GithubStarPill";
 import { cookies } from "next/headers";
 import { SignOutButton } from "./SignOutButton";
+import { MobileMenu } from "./MobileMenu";
 
 export async function Navbar() {
     const cookieStore = await cookies();
@@ -45,16 +46,22 @@ export async function Navbar() {
                 <div className="hidden sm:block">
                     <GithubStarPill />
                 </div>
-                {isLoggedIn ? (
-                    <SignOutButton />
-                ) : (
-                    <Link
-                        href="/auth/signin"
-                        className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors inline-block"
-                    >
-                        Sign In
-                    </Link>
-                )}
+
+                <div className="hidden md:block">
+                    {isLoggedIn ? (
+                        <SignOutButton />
+                    ) : (
+                        <Link
+                            href="/auth/signin"
+                            className="bg-white text-black px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors inline-block"
+                        >
+                            Sign In
+                        </Link>
+                    )}
+                </div>
+
+                {/* Mobile Menu (hamburger icon handles internal state) */}
+                <MobileMenu isLoggedIn={isLoggedIn} signOutNode={<SignOutButton />} />
             </div>
         </nav>
     );
