@@ -86,64 +86,138 @@ export default async function ViewPresetPage({ params }: PageProps) {
                 </div>
             );
         } else if (trimmed.includes(',') && trimmed.includes('\n')) {
-            // CSV parsing
-            const rows = trimmed.split('\n').filter(r => r.trim());
-            if (rows.length === 0) return null;
-
-            // Simple regex parser for basic quoted CSV
-            const parseCSVRow = (row: string) => {
-                const result = [];
-                let current = '';
+            // Better CSV parser that handles newlines inside quotes
+            const parseCSV = (text: string) => {
+                const rows: string[][] = [];
+                let currentRow: string[] = [];
+                let currentCell = '';
                 let inQuotes = false;
-                for (let i = 0; i < row.length; i++) {
-                    const char = row[i];
-                    if (char === '"' && row[i + 1] === '"') {
-                        current += '"';
-                        i++;
+
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const nextChar = text[i + 1];
+
+                    if (char === '"' && inQuotes && nextChar === '"') {
+                        currentCell += '"';
+                        i++; // skip escaped quote
                     } else if (char === '"') {
                         inQuotes = !inQuotes;
                     } else if (char === ',' && !inQuotes) {
-                        result.push(current);
-                        current = '';
+                        currentRow.push(currentCell);
+                        currentCell = '';
+                    } else if (char === '\n' && !inQuotes) {
+                        // End of row
+                        currentRow.push(currentCell);
+                        // Only add row if it has content
+                        if (currentRow.some(c => c.trim() !== '')) {
+                            rows.push(currentRow.map(s => s.trim()));
+                        }
+                        currentRow = [];
+                        currentCell = '';
                     } else {
-                        current += char;
+                        currentCell += char;
                     }
                 }
-                result.push(current);
-                return result.map(s => s.trim());
+
+                // Push the last cell/row
+                currentRow.push(currentCell);
+                if (currentRow.some(c => c.trim() !== '')) {
+                    rows.push(currentRow.map(s => s.trim()));
+                }
+
+                return rows;
             };
 
-            const headers = parseCSVRow(rows[0]);
-            const dataRows = rows.slice(1).map(r => parseCSVRow(r));
+            const parsedRows = parseCSV(trimmed);
+            let isLikelyCSV = false;
+            let expectedCols = 0;
 
-            return (
-                <div className="mt-2 overflow-x-auto border border-[#262626] rounded-lg">
-                    <table className="w-full text-left text-xs text-muted-foreground min-w-max wrap-break-word">
-                        <thead className="bg-[#121212] text-foreground uppercase border-b border-[#262626]">
-                            <tr>
-                                {headers.map((h, i) => (
-                                    <th key={i} className="px-4 py-3 font-medium border-r border-[#262626]/50 last:border-0 min-w-[150px] max-w-[300px] whitespace-normal">
-                                        {h}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {dataRows.map((row, i) => (
-                                <tr key={i} className="border-b border-[#262626] last:border-0 hover:bg-[#121212]/50 transition-colors">
-                                    {row.map((cell, j) => (
-                                        <td key={j} className="px-4 py-3 border-r border-[#262626]/50 last:border-0 align-top min-w-[150px] max-w-[300px] whitespace-normal break-words">
-                                            <div className="line-clamp-3" title={cell}>
-                                                {cell}
-                                            </div>
-                                        </td>
+            const colCounts = parsedRows.map(r => r.length);
+            const maxCols = Math.max(...colCounts, 0);
+
+            if (maxCols > 1 && parsedRows.length > 1) {
+                const countFreq: Record<number, number> = {};
+                for (const c of colCounts) {
+                    countFreq[c] = (countFreq[c] || 0) + 1;
+                }
+
+                let mostCommonCols = 0;
+                let maxFreq = 0;
+                for (const [colsStr, freq] of Object.entries(countFreq)) {
+                    const cols = parseInt(colsStr);
+                    if (cols > 1 && freq > maxFreq) {
+                        mostCommonCols = cols;
+                        maxFreq = freq;
+                    }
+                }
+
+                if (mostCommonCols > 1 && maxFreq >= parsedRows.length * 0.5) {
+                    expectedCols = mostCommonCols;
+
+                    let totalLen = 0;
+                    let cells = 0;
+                    for (const r of parsedRows) {
+                        if (r.length === expectedCols) {
+                            for (const cell of r) {
+                                totalLen += cell.length;
+                                cells++;
+                            }
+                        }
+                    }
+                    const avgLen = cells > 0 ? totalLen / cells : 0;
+                    // Relax the average length check if there are 3+ columns making it extremely structured
+                    if (avgLen < 150 || expectedCols >= 3) {
+                        isLikelyCSV = true;
+                    }
+                }
+            }
+
+            if (isLikelyCSV) {
+                let headers = parsedRows[0];
+                if (headers.length < expectedCols) {
+                    headers = [...headers, ...Array(expectedCols - headers.length).fill('')];
+                } else if (headers.length > expectedCols) {
+                    headers = headers.slice(0, expectedCols);
+                }
+
+                const dataRows = parsedRows.slice(1).map(r => {
+                    if (r.length < expectedCols) {
+                        return [...r, ...Array(expectedCols - r.length).fill('')];
+                    } else if (r.length > expectedCols) {
+                        return r.slice(0, expectedCols);
+                    }
+                    return r;
+                });
+
+                return (
+                    <div className="mt-2 overflow-x-auto border border-[#262626] rounded-lg">
+                        <table className="w-full text-left text-xs text-muted-foreground min-w-max wrap-break-word">
+                            <thead className="bg-[#121212] text-foreground uppercase border-b border-[#262626]">
+                                <tr>
+                                    {headers.map((h, i) => (
+                                        <th key={i} className="px-4 py-3 font-medium border-r border-[#262626]/50 last:border-0 min-w-[150px] max-w-[300px] whitespace-normal">
+                                            {h}
+                                        </th>
                                     ))}
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            );
+                            </thead>
+                            <tbody>
+                                {dataRows.map((row, i) => (
+                                    <tr key={i} className="border-b border-[#262626] last:border-0 hover:bg-[#121212]/50 transition-colors">
+                                        {row.map((cell, j) => (
+                                            <td key={j} className="px-4 py-3 border-r border-[#262626]/50 last:border-0 align-top min-w-[150px] max-w-[300px] whitespace-normal break-words">
+                                                <div className="line-clamp-3" title={cell}>
+                                                    {cell}
+                                                </div>
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                );
+            }
         }
 
         return <p className="text-muted-foreground mt-2 whitespace-pre-wrap font-mono text-sm bg-[#121212] p-4 rounded-lg border border-[#262626]">{trimmed}</p>;
@@ -157,8 +231,14 @@ export default async function ViewPresetPage({ params }: PageProps) {
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 flex items-center justify-center overflow-hidden">
-                                {preset.target_url ? (
-                                    <img src={`https://www.google.com/s2/favicons?domain=${preset.target_url}&sz=64`} className="w-12 h-12" alt="Icon" />
+                                {preset.icon && preset.icon.startsWith("data:image/") ? (
+                                    <img src={preset.icon} className="w-16 h-16 object-cover rounded-lg" alt="Icon" />
+                                ) : preset.icon && preset.icon.includes(".") ? (
+                                    <img src={`https://www.google.com/s2/favicons?domain=${preset.icon}&sz=64`} className="w-12 h-12 object-contain" alt="Icon" />
+                                ) : preset.icon ? (
+                                    <MaterialIcon name={preset.icon} className="text-5xl text-foreground" />
+                                ) : preset.target_url ? (
+                                    <img src={`https://www.google.com/s2/favicons?domain=${preset.target_url}&sz=64`} className="w-12 h-12 object-contain" alt="Icon" />
                                 ) : (
                                     <MaterialIcon name="extension" className="text-5xl text-muted-foreground" />
                                 )}

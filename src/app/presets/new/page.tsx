@@ -30,8 +30,34 @@ export default function NewPresetPage() {
     const [error, setError] = useState("");
     const [jsonError, setJsonError] = useState("");
     const [generating, setGenerating] = useState(false);
-    const [iconType, setIconType] = useState<"favicon" | "material">("material");
+    const [iconType, setIconType] = useState<"favicon" | "upload">("upload");
     const router = useRouter();
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = 96;
+                canvas.height = 96;
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                    const size = Math.min(img.width, img.height);
+                    const sx = (img.width - size) / 2;
+                    const sy = (img.height - size) / 2;
+                    ctx.drawImage(img, sx, sy, size, size, 0, 0, 96, 96);
+                    const dataUrl = canvas.toDataURL("image/webp", 0.9);
+                    setFormData(prev => ({ ...prev, icon: dataUrl }));
+                }
+            };
+            img.src = event.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = e.target.value;
@@ -255,12 +281,12 @@ export default function NewPresetPage() {
                                         <button
                                             type="button"
                                             onClick={() => {
-                                                setIconType("material");
-                                                setFormData({ ...formData, icon: ICONS[0] });
+                                                setIconType("upload");
+                                                setFormData({ ...formData, icon: "" });
                                             }}
-                                            className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${iconType === "material" ? "bg-[#262626] text-white" : "text-muted-foreground hover:text-white"}`}
+                                            className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${iconType === "upload" ? "bg-[#262626] text-white" : "text-muted-foreground hover:text-white"}`}
                                         >
-                                            Material Icon
+                                            Upload Image
                                         </button>
                                         <button
                                             type="button"
@@ -282,18 +308,22 @@ export default function NewPresetPage() {
                                         </button>
                                     </div>
 
-                                    {iconType === "material" ? (
-                                        <div className="flex flex-wrap gap-2">
-                                            {ICONS.map(iconName => (
-                                                <button
-                                                    key={iconName}
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, icon: iconName })}
-                                                    className={`w-10 h-10 rounded-lg flex items-center justify-center border transition-colors ${formData.icon === iconName ? "bg-[#262626] border-zinc-500 text-white" : "bg-[#121212] border-[#262626] text-muted-foreground hover:border-zinc-500 hover:text-white"}`}
-                                                >
-                                                    <MaterialIcon name={iconName} className="text-xl" />
-                                                </button>
-                                            ))}
+                                    {iconType === "upload" ? (
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 rounded-lg bg-[#121212] border border-[#262626] flex items-center justify-center overflow-hidden shrink-0">
+                                                    {formData.icon && formData.icon.startsWith("data:image/") ? (
+                                                        <img src={formData.icon} alt="Preview" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <MaterialIcon name="image" className="text-muted-foreground" />
+                                                    )}
+                                                </div>
+                                                <label className="flex-1 cursor-pointer bg-[#171717] border border-[#262626] border-dashed hover:bg-[#262626] rounded-lg px-3 py-2 text-xs font-medium text-center transition-colors text-muted-foreground hover:text-foreground">
+                                                    Choose Image...
+                                                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                                </label>
+                                            </div>
+                                            <p className="text-[10px] text-muted-foreground">Image will be cropped to 96x96 pixels</p>
                                         </div>
                                     ) : (
                                         <div className="bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus-within:border-zinc-700 transition-colors flex items-center gap-2">

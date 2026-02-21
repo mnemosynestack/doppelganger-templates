@@ -18,7 +18,12 @@ export interface PresetProps {
 function PresetIcon({ icon }: { icon: string }) {
     const [error, setError] = useState(false);
 
-    const isDomain = icon && icon.includes(".");
+    const isDataUrl = icon && icon.startsWith("data:image/");
+    const isDomain = icon && icon.includes(".") && !isDataUrl;
+
+    if (isDataUrl) {
+        return <img src={icon} alt="Icon" className="w-8 h-8 object-cover rounded" onError={() => setError(true)} />
+    }
 
     if (!isDomain) {
         return <MaterialIcon name={icon || "public"} className="text-3xl text-foreground" aria-hidden="true" />;

@@ -29,24 +29,29 @@ export async function POST(req: Request) {
         const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
         const genCountStr = cookieStore.get("ai_gen_limit")?.value;
         const now = Date.now();
+        const isAdmin = decoded.username === "asermnasr";
 
-        // 1. IP Check
-        let ipData = ipLimits.get(ip);
-        if (ipData && now > ipData.resetAt) {
-            ipData = undefined; // Expired, reset
-        }
-        if (ipData && ipData.count >= MAX_REQUESTS_PER_DAY) {
-            return NextResponse.json({ error: "Daily limit reached for this IP." }, { status: 429 });
-        }
-
-        // 2. Cookie Check
         let cookieCount = 0;
-        if (genCountStr) {
-            const parsedCookie = JSON.parse(genCountStr);
-            if (now < parsedCookie.resetAt) {
-                cookieCount = parsedCookie.count;
-                if (cookieCount >= MAX_REQUESTS_PER_DAY) {
-                    return NextResponse.json({ error: "Daily limit reached for this browser." }, { status: 429 });
+        let ipData = undefined;
+
+        if (!isAdmin) {
+            // 1. IP Check
+            ipData = ipLimits.get(ip);
+            if (ipData && now > ipData.resetAt) {
+                ipData = undefined; // Expired, reset
+            }
+            if (ipData && ipData.count >= MAX_REQUESTS_PER_DAY) {
+                return NextResponse.json({ error: "Daily limit reached for this IP." }, { status: 429 });
+            }
+
+            // 2. Cookie Check
+            if (genCountStr) {
+                const parsedCookie = JSON.parse(genCountStr);
+                if (now < parsedCookie.resetAt) {
+                    cookieCount = parsedCookie.count;
+                    if (cookieCount >= MAX_REQUESTS_PER_DAY) {
+                        return NextResponse.json({ error: "Daily limit reached for this browser." }, { status: 429 });
+                    }
                 }
             }
         }
@@ -101,30 +106,33 @@ Respond STRICTLY with a JSON object in this format (no markdown, no other text):
             parsed.category = "QA Testing"; // Fallback
         }
 
-        // Increment IP
-        if (ipData) {
-            ipData.count += 1;
-        } else {
-            ipLimits.set(ip, { count: 1, resetAt: now + TWENTY_FOUR_HOURS });
-        }
-
-        // Increment Cookie
-        let newCookieResetAt = now + TWENTY_FOUR_HOURS;
-        if (genCountStr) {
-            const parsedCookie = JSON.parse(genCountStr);
-            if (now < parsedCookie.resetAt) {
-                newCookieResetAt = parsedCookie.resetAt;
-            }
-        }
-
         const res = NextResponse.json(parsed);
-        res.cookies.set("ai_gen_limit", JSON.stringify({ count: cookieCount + 1, resetAt: newCookieResetAt }), {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            expires: new Date(newCookieResetAt)
-        });
+
+        if (!isAdmin) {
+            // Increment IP
+            if (ipData) {
+                ipData.count += 1;
+            } else {
+                ipLimits.set(ip, { count: 1, resetAt: now + TWENTY_FOUR_HOURS });
+            }
+
+            // Increment Cookie
+            let newCookieResetAt = now + TWENTY_FOUR_HOURS;
+            if (genCountStr) {
+                const parsedCookie = JSON.parse(genCountStr);
+                if (now < parsedCookie.resetAt) {
+                    newCookieResetAt = parsedCookie.resetAt;
+                }
+            }
+
+            res.cookies.set("ai_gen_limit", JSON.stringify({ count: cookieCount + 1, resetAt: newCookieResetAt }), {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                expires: new Date(newCookieResetAt)
+            });
+        }
 
         return res;
 

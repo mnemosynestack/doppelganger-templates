@@ -4,11 +4,20 @@ import GithubStarPill from "@/components/GithubStarPill";
 import { cookies } from "next/headers";
 import { SignOutButton } from "./SignOutButton";
 import { MobileMenu } from "./MobileMenu";
+import { verifyToken } from "@/lib/auth";
 
 export async function Navbar() {
     const cookieStore = await cookies();
-    const token = cookieStore.get("token");
+    const token = cookieStore.get("token")?.value;
     const isLoggedIn = !!token;
+
+    let isAdmin = false;
+    if (token) {
+        const payload = await verifyToken(token);
+        if (payload?.username === "asermnasr") {
+            isAdmin = true;
+        }
+    }
 
     return (
         <nav className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-border bg-background/50 backdrop-blur-md sticky top-0 z-50">
@@ -25,7 +34,7 @@ export async function Navbar() {
                 </Link>
             </div>
 
-            <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground font-medium flex-1 justify-center">
+            <div className="hidden md:flex items-center gap-8 text-sm uppercase tracking-wide text-muted-foreground font-semibold flex-1 justify-center">
                 <a href="https://doppelgangerdev.com/docs" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                     Docs
                 </a>
@@ -38,8 +47,13 @@ export async function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
+                {isAdmin && (
+                    <Link href="/admin" className="hidden sm:block text-sm font-semibold uppercase tracking-wide text-red-500 hover:text-red-400 transition-colors px-3 py-1.5 rounded-md hover:bg-[#121212]">
+                        Admin Dashboard
+                    </Link>
+                )}
                 {isLoggedIn && (
-                    <Link href="/dashboard" className="hidden sm:block text-sm font-medium text-foreground hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-[#121212]">
+                    <Link href="/dashboard" className="hidden sm:block text-sm font-semibold uppercase tracking-wide text-foreground hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-[#121212]">
                         Creator Dashboard
                     </Link>
                 )}
@@ -61,7 +75,7 @@ export async function Navbar() {
                 </div>
 
                 {/* Mobile Menu (hamburger icon handles internal state) */}
-                <MobileMenu isLoggedIn={isLoggedIn} signOutNode={<SignOutButton />} />
+                <MobileMenu isLoggedIn={isLoggedIn} isAdmin={isAdmin} signOutNode={<SignOutButton />} />
             </div>
         </nav>
     );

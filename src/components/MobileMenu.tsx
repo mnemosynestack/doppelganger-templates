@@ -7,10 +7,11 @@ import GithubStarPill from "@/components/GithubStarPill";
 
 interface MobileMenuProps {
     isLoggedIn: boolean;
+    isAdmin?: boolean;
     signOutNode: React.ReactNode;
 }
 
-export function MobileMenu({ isLoggedIn, signOutNode }: MobileMenuProps) {
+export function MobileMenu({ isLoggedIn, isAdmin, signOutNode }: MobileMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -48,7 +49,7 @@ export function MobileMenu({ isLoggedIn, signOutNode }: MobileMenuProps) {
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-6 text-sm font-medium">
+                    <div className="flex flex-col gap-6 text-sm uppercase tracking-wide font-semibold">
                         <a href="https://doppelgangerdev.com/docs" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             Docs
                         </a>
@@ -63,6 +64,11 @@ export function MobileMenu({ isLoggedIn, signOutNode }: MobileMenuProps) {
 
                         {isLoggedIn ? (
                             <>
+                                {isAdmin && (
+                                    <Link href="/admin" className="text-red-500 hover:text-red-400 transition-colors">
+                                        Admin Dashboard
+                                    </Link>
+                                )}
                                 <Link href="/dashboard" className="text-foreground hover:text-white transition-colors">
                                     Creator Dashboard
                                 </Link>
