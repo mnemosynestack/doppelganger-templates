@@ -15,42 +15,68 @@ async function getPresets(category?: string, sort?: string, search?: string) {
       orderBy = 'created_at ASC';
     }
 
-    const { rows } = await query(`SELECT * FROM presets ORDER BY ${orderBy}`);
+    // Parallel queries: one for counts (grouped by category), one for data (filtered and sorted)
+    const countsQuery = `
+      SELECT COALESCE(NULLIF(category, ''), 'QA Testing') as cat, COUNT(*) as count
+      FROM presets
+      GROUP BY COALESCE(NULLIF(category, ''), 'QA Testing')
+    `;
 
-    // Calculate counts (always based on full dataset)
-    const counts: Record<string, number> = { "All Presets": rows.length };
-    rows.forEach((row: any) => {
-      const cat = row.category || "QA Testing"; // Default for legacy data
-      counts[cat] = (counts[cat] || 0) + 1;
-    });
+    let dataQuery = `
+      SELECT id, title, author_name, description, downloads, time_estimate, type, icon, target_url, category, created_at
+      FROM presets
+    `;
 
-    // Filter rows if category is provided
-    let filteredRows = category && category !== "All Presets"
-      ? rows.filter((r: any) => (r.category || "QA Testing") === category)
-      : rows;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: any[] = [];
+    const conditions: string[] = [];
 
-    // Search filter
-    if (search && search.trim()) {
-      const q = search.toLowerCase();
-      filteredRows = filteredRows.filter((r: any) =>
-        (r.title || "").toLowerCase().includes(q) ||
-        (r.description || "").toLowerCase().includes(q)
-      );
+    // Filter by category
+    if (category && category !== "All Presets") {
+      conditions.push(`(COALESCE(NULLIF(category, ''), 'QA Testing') = $${params.length + 1})`);
+      params.push(category);
     }
 
-    const presets = filteredRows.map((row: unknown) => {
-      const r = row as any;
-      return {
-        id: r.id,
-        title: r.title,
-        author: r.author_name || "Unknown",
-        description: r.description,
-        downloads: String(r.downloads || "0"),
-        time: r.time_estimate || "—",
-        type: r.type as "SCRAPE" | "AGENT",
-        icon: r.icon || r.target_url || "public"
-      };
+    // Filter by search
+    if (search && search.trim()) {
+      const q = `%${search.trim()}%`;
+      conditions.push(`(title ILIKE $${params.length + 1} OR description ILIKE $${params.length + 1})`);
+      params.push(q);
+    }
+
+    if (conditions.length > 0) {
+      dataQuery += " WHERE " + conditions.join(" AND ");
+    }
+
+    dataQuery += ` ORDER BY ${orderBy}`;
+
+    // Execute queries in parallel
+    const [countsResult, dataResult] = await Promise.all([
+      query(countsQuery),
+      query(dataQuery, params)
+    ]);
+
+    // Process counts
+    const counts: Record<string, number> = { "All Presets": 0 };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    countsResult.rows.forEach((row: any) => {
+      const count = parseInt(row.count, 10);
+      counts[row.cat] = count;
+      counts["All Presets"] += count;
     });
+
+    // Process presets
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const presets = dataResult.rows.map((r: any) => ({
+      id: r.id,
+      title: r.title,
+      author: r.author_name || "Unknown",
+      description: r.description,
+      downloads: String(r.downloads || "0"),
+      time: r.time_estimate || "—",
+      type: r.type as "SCRAPE" | "AGENT",
+      icon: r.icon || r.target_url || "public"
+    }));
 
     return { presets, counts };
   } catch (error) {
