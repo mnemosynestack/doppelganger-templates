@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
-import { useState } from "react";
+import { useState, memo } from "react";
 
 export interface PresetProps {
     id: string; // Added ID
@@ -22,7 +22,7 @@ function PresetIcon({ icon }: { icon: string }) {
     const isDomain = icon && icon.includes(".") && !isDataUrl;
 
     if (isDataUrl) {
-        return <img src={icon} alt="Icon" className="w-8 h-8 object-cover rounded" onError={() => setError(true)} />
+        return <img src={icon} alt="Icon" className="w-8 h-8 object-cover rounded" width="32" height="32" loading="lazy" onError={() => setError(true)} />
     }
 
     if (!isDomain) {
@@ -38,12 +38,15 @@ function PresetIcon({ icon }: { icon: string }) {
             src={`https://www.google.com/s2/favicons?domain=${icon}&sz=64`}
             alt="Favicon"
             className="w-8 h-8 object-contain"
+            width="32"
+            height="32"
+            loading="lazy"
             onError={() => setError(true)}
         />
     );
 }
 
-export function PresetCard({ id, title, description, author, downloads, time, type, icon }: PresetProps) {
+export const PresetCard = memo(function PresetCard({ id, title, description, author, downloads, time, type, icon }: PresetProps) {
     return (
         <div className="group bg-[#0a0a0a] border border-[#262626] rounded-xl p-5 hover:border-zinc-700 transition-all flex flex-col h-full relative overflow-hidden">
             {/* Hover glow effect */}
@@ -90,4 +93,4 @@ export function PresetCard({ id, title, description, author, downloads, time, ty
             </div>
         </div>
     );
-}
+});
