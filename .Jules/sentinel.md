@@ -1,0 +1,4 @@
+## 2025-02-22 - Default Secret Key in Production
+**Vulnerability:** The application was configured to fall back to a hardcoded "dev-secret-key-change-me" for `JWT_SECRET` if the environment variable was missing. This would allow an attacker to forge valid authentication tokens if the secret was not set in production.
+**Learning:** Build tools like Next.js automatically set `NODE_ENV=production` during the build process. Top-level runtime checks for environment variables can therefore break the build if those variables are not present in the build environment.
+**Prevention:** Use lazy evaluation (e.g., a function or getter) for configuration values that are only needed at runtime but might cause build failures if checked immediately. Always fail securely by throwing an error in production if critical secrets are missing.
