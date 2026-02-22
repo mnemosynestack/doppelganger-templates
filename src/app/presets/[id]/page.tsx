@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import CodeBlock from "@/components/CodeBlock";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth";
+import { sanitizeUrl } from "@/lib/utils";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -459,7 +460,7 @@ export default async function ViewPresetPage({ params }: PageProps) {
 
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">Target URL</p>
-                                <a href={preset.target_url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline break-all block">
+                                <a href={sanitizeUrl(preset.target_url)} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline break-all block">
                                     {preset.target_url || "N/A"}
                                 </a>
                             </div>
