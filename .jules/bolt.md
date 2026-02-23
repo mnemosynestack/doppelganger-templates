@@ -1,0 +1,3 @@
+## 2024-05-23 - Next.js 16.1.6 revalidateTag Signature
+**Learning:** Next.js 16.1.6 (preview/canary?) changes `revalidateTag` signature to require a second argument (`profile` or `CacheLifeConfig`), unlike v14/15 where it was optional. The TS definition is `revalidateTag(tag: string, profile: string | CacheLifeConfig): undefined;`. Omitting it causes a type error. Passing `{ expire: 0 }` works for immediate invalidation.
+**Action:** When working with bleeding-edge Next.js versions, always check the actual type definitions in `node_modules` or runtime warnings rather than relying on v14/15 docs. Use `{ expire: 0 }` for immediate cache invalidation in this version.

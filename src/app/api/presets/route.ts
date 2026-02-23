@@ -4,6 +4,7 @@ import { verifyToken } from '@/lib/auth';
 import { sanitizeUrl } from '@/lib/utils';
 import { z } from 'zod';
 import { cookies } from 'next/headers';
+import { revalidateTag } from 'next/cache';
 
 const createPresetSchema = z.object({
     title: z.string().min(3),
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
             [payload.sub, title, description, payload.username, type, category, icon, time_estimate, configuration, targetUrl, expected_output]
         );
 
+        revalidateTag('preset-counts', { expire: 0 });
         return NextResponse.json({ message: 'Preset created' });
     } catch (error: unknown) {
         console.error('Create preset error:', error);

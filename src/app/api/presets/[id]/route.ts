@@ -4,6 +4,7 @@ import { verifyToken } from '@/lib/auth';
 import { sanitizeUrl } from '@/lib/utils';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
+import { revalidateTag } from 'next/cache';
 
 const updatePresetSchema = z.object({
     title: z.string().min(3).optional(),
@@ -52,6 +53,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         await query('DELETE FROM presets WHERE id = $1', [id]);
 
+        revalidateTag('preset-counts', { expire: 0 });
         return NextResponse.json({ message: 'Preset deleted' });
     } catch (error) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -123,6 +125,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         await query(queryStr, values);
 
+        revalidateTag('preset-counts', { expire: 0 });
         return NextResponse.json({ message: 'Preset updated' });
 
     } catch (error) {
