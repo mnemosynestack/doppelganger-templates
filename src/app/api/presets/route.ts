@@ -74,7 +74,7 @@ export async function POST(req: Request) {
             [payload.sub, title, description, payload.username, type, category, icon, time_estimate, configuration, targetUrl, expected_output]
         );
 
-        revalidateTag('preset-counts');
+        revalidateTag('preset-counts', { expire: 0 });
 
         return NextResponse.json({ message: 'Preset created' });
     } catch (error: unknown) {
