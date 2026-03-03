@@ -14,7 +14,7 @@ export async function Navbar() {
     let isAdmin = false;
     if (token) {
         const payload = await verifyToken(token);
-        if (payload?.username === "asermnasr") {
+        if (process.env.ADMIN_USERNAME && payload?.username === process.env.ADMIN_USERNAME) {
             isAdmin = true;
         }
     }
