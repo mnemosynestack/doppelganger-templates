@@ -14,7 +14,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         }
 
         const payload = await verifyToken(token);
-        if (!payload || payload.username !== 'asermnasr') {
+        if (!payload || !process.env.ADMIN_USERNAME || payload.username !== process.env.ADMIN_USERNAME) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 

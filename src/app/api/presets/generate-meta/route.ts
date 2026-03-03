@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         const ip = req.headers.get("x-forwarded-for") || "unknown-ip";
         const genCountStr = cookieStore.get("ai_gen_limit")?.value;
         const now = Date.now();
-        const isAdmin = decoded.username === "asermnasr";
+        const isAdmin = !!process.env.ADMIN_USERNAME && decoded.username === process.env.ADMIN_USERNAME;
 
         let cookieCount = 0;
         let ipData = undefined;
