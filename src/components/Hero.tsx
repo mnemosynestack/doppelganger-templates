@@ -1,27 +1,48 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MaterialIcon from "@/components/MaterialIcon";
 
 export function Hero() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [query, setQuery] = useState(searchParams.get("search") || "");
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        setQuery(searchParams.get("search") || "");
+        const currentSearch = searchParams.get("search") || "";
+        if (query !== currentSearch) {
+            setQuery(currentSearch);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
+
+    useEffect(() => {
+        return () => {
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const handleSearch = (value: string) => {
         setQuery(value);
-        const params = new URLSearchParams(searchParams.toString());
-        if (value.trim()) {
-            params.set("search", value);
-        } else {
-            params.set("q", query);
+
+        if (debounceTimeoutRef.current) {
+            clearTimeout(debounceTimeoutRef.current);
         }
-        router.push(`/?${params.toString()}`, { scroll: false });
+
+        debounceTimeoutRef.current = setTimeout(() => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (value.trim()) {
+                params.set("search", value);
+            } else {
+                params.delete("search");
+                params.delete("q");
+            }
+            router.push(`/?${params.toString()}`, { scroll: false });
+        }, 300);
     };
 
     return (

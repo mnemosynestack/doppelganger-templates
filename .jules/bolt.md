@@ -1,0 +1,3 @@
+## 2024-05-18 - Debounce Client-Side Search
+**Learning:** In Next.js App Router applications, pushing to the router on every keystroke in a search input can cause excessive server-side data fetches and client-side navigations, significantly degrading performance.
+**Action:** Always implement a debounce (e.g., using `setTimeout` and `useRef`) on input fields that trigger route changes or API calls. This batches rapid updates into a single execution after the user pauses typing.
