@@ -17,8 +17,10 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
         }
 
+        // Optimization: explicitly select metadata columns to avoid fetching massive 'configuration' and 'expected_output' JSON blobs (up to 100kb+ each) for list views.
+        // This dramatically reduces database memory overhead and network payload size.
         const { rows } = await query(
-            'SELECT * FROM presets WHERE user_id = $1 ORDER BY created_at DESC',
+            'SELECT id, title, description, type, icon, downloads, time_estimate, category, target_url, created_at, updated_at FROM presets WHERE user_id = $1 ORDER BY created_at DESC',
             [payload.sub]
         );
 

@@ -26,7 +26,9 @@ export const createPresetSchema = z.object({
 
 export async function GET(req: Request) {
     try {
-        const { rows } = await query('SELECT * FROM presets ORDER BY created_at DESC');
+        // Optimization: explicitly select metadata columns to avoid fetching massive 'configuration' and 'expected_output' JSON blobs (up to 100kb+ each) for list views.
+        // This dramatically reduces database memory overhead and network payload size.
+        const { rows } = await query('SELECT id, title, description, author_name, type, category, icon, downloads, time_estimate, target_url, created_at, updated_at FROM presets ORDER BY created_at DESC');
         return NextResponse.json(rows);
     } catch (error) {
         console.error('Fetch presets error:', error);
