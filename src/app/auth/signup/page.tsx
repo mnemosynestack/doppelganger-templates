@@ -12,7 +12,6 @@ export default function SignupPage() {
         password: "",
     });
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -69,10 +68,11 @@ export default function SignupPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+                        <label htmlFor="username" className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
                             Username
                         </label>
                         <input
+                            id="username"
                             type="text"
                             required
                             className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors"
@@ -83,10 +83,11 @@ export default function SignupPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+                        <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
                             Email
                         </label>
                         <input
+                            id="email"
                             type="email"
                             required
                             className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors"
@@ -97,10 +98,11 @@ export default function SignupPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+                        <label htmlFor="password" className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
                             Password
                         </label>
                         <input
+                            id="password"
                             type="password"
                             required
                             minLength={8}
@@ -114,8 +116,9 @@ export default function SignupPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-white text-black font-medium py-2.5 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 mt-6"
+                        className="w-full bg-white text-black font-medium py-2.5 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 mt-6 flex items-center justify-center gap-2"
                     >
+                        {loading && <MaterialIcon name="progress_activity" className="animate-spin text-sm" />}
                         {loading ? "Creating account..." : "Sign Up"}
                     </button>
                 </form>

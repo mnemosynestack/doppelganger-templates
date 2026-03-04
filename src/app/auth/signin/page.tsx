@@ -72,10 +72,11 @@ function SigninContent() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+                    <label htmlFor="email" className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
                         Email
                     </label>
                     <input
+                        id="email"
                         type="email"
                         required
                         className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors"
@@ -86,10 +87,11 @@ function SigninContent() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+                    <label htmlFor="password" className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
                         Password
                     </label>
                     <input
+                        id="password"
                         type="password"
                         required
                         className="w-full bg-[#121212] border border-[#262626] rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-zinc-700 transition-colors"
@@ -102,14 +104,15 @@ function SigninContent() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-white text-black font-medium py-2.5 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 mt-6"
+                    className="w-full bg-white text-black font-medium py-2.5 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 mt-6 flex items-center justify-center gap-2"
                 >
+                    {loading && <MaterialIcon name="progress_activity" className="animate-spin text-sm" />}
                     {loading ? "Signing in..." : "Sign In"}
                 </button>
             </form>
 
             <p className="text-center text-sm text-muted-foreground mt-6">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/auth/signup" className="text-foreground hover:underline">
                     Sign Up
                 </Link>
