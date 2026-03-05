@@ -26,7 +26,7 @@ export const createPresetSchema = z.object({
 
 export async function GET(req: Request) {
     try {
-        const { rows } = await query('SELECT * FROM presets ORDER BY created_at DESC');
+        const { rows } = await query('SELECT id, user_id, title, description, author_name, type, category, icon, time_estimate, target_url, downloads, created_at, updated_at FROM presets ORDER BY created_at DESC');
         return NextResponse.json(rows);
     } catch (error) {
         console.error('Fetch presets error:', error);
