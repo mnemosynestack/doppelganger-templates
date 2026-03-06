@@ -58,9 +58,9 @@ export async function POST(req: Request) {
         await transport.sendMail({
             from: process.env.SMTP_FROM,
             to: email,
-            subject: 'Verify your Doppelganger account',
+            subject: 'Verify your Figranium account',
             html: `
-        <h1>Welcome to Doppelganger!</h1>
+        <h1>Welcome to Figranium!</h1>
         <p>Please verify your email by clicking the link below:</p>
         <a href="${verifyUrl}">${verifyUrl}</a>
       `,

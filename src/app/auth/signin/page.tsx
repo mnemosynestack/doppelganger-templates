@@ -52,7 +52,7 @@ function SigninContent() {
             <div className="text-center mb-8">
                 <h1 className="text-2xl font-bold mb-2">Welcome back</h1>
                 <p className="text-sm text-muted-foreground">
-                    Sign in to your Doppelganger account
+                    Sign in to your Figranium account
                 </p>
             </div>
 

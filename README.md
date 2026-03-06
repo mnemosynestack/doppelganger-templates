@@ -1,12 +1,12 @@
-# Doppelganger Templates
+# Figranium Templates
 
-The community-powered automation presets hub for [Doppelganger](https://doppelgangerdev.com) — browse, share, and download pre-built automation workflows.
+The community-powered automation presets hub for [Figranium](https://figranium.dev) — browse, share, and download pre-built automation workflows.
 
-🌐 **[templates.doppelgangerdev.com](https://templates.doppelgangerdev.com)**
+🌐 **[templates.figranium.dev](https://templates.figranium.dev)**
 
 ## What is this?
 
-Doppelganger Templates is an open marketplace where users can share and discover automation presets. Each preset is a ready-to-use configuration that can be imported directly into Doppelganger to automate tasks like web scraping, QA testing, lead generation, and more.
+Figranium Templates is an open marketplace where users can share and discover automation presets. Each preset is a ready-to-use configuration that can be imported directly into Figranium to automate tasks like web scraping, QA testing, lead generation, and more.
 
 ## Features
 
@@ -17,11 +17,11 @@ Doppelganger Templates is an open marketplace where users can share and discover
 
 ## How It Works
 
-Doppelganger Templates simplifies the sharing of automation configurations.
+Figranium Templates simplifies the sharing of automation configurations.
 
 1. **Browse**: Users explore categories like "Lead Gen" or "QA Testing" to find relevant presets.
 2. **Download**: Each preset includes a JSON configuration file. Clicking "Download" saves this file locally, or users can copy the JSON directly.
-3. **Import**: The downloaded JSON file is imported into the **Doppelganger** desktop application, instantly configuring the tool with the selected workflow.
+3. **Import**: The downloaded JSON file is imported into the **Figranium** desktop application, instantly configuring the tool with the selected workflow.
 
 ## Architecture & Tech Stack
 
@@ -63,7 +63,7 @@ The application uses a relational database model centered around users and prese
 
 ## Open Source & Self-Hosting
 
-This repository contains the source code for **[templates.doppelgangerdev.com](https://templates.doppelgangerdev.com)**, the official community marketplace for Doppelganger automation presets.
+This repository contains the source code for **[templates.figranium.dev](https://templates.figranium.dev)**, the official community marketplace for Figranium automation presets.
 
 ### Why Open Source?
 We believe in transparency. By open-sourcing the platform code, we allow the community to:
@@ -81,14 +81,14 @@ The code is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0
 
 **However, please note:**
 1. **This project is not designed for self-hosting.** We do not provide installation guides, Docker containers, or support for running your own instance.
-2. **The value is in the network.** The official site connects thousands of Doppelganger users. A self-hosted instance will be isolated from the main community repository.
+2. **The value is in the network.** The official site connects thousands of Figranium users. A self-hosted instance will be isolated from the main community repository.
 3. **No Support.** We cannot assist with setup, configuration, or debugging of self-hosted instances.
 
-You are welcome to explore, learn from, and adapt this code, but we recommend using the official [templates.doppelgangerdev.com](https://templates.doppelgangerdev.com) for the best experience.
+You are welcome to explore, learn from, and adapt this code, but we recommend using the official [templates.figranium.dev](https://templates.figranium.dev) for the best experience.
 
 ## Contributing
 
-Submit presets directly through the platform at [templates.doppelgangerdev.com](https://templates.doppelgangerdev.com), or open a pull request.
+Submit presets directly through the platform at [templates.figranium.dev](https://templates.figranium.dev), or open a pull request.
 
 ## License
 

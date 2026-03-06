@@ -1,7 +1,7 @@
 import { query } from '@/lib/db';
 import { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://templates.doppelgangerdev.com';
+const BASE_URL = 'https://templates.figranium.dev';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static pages

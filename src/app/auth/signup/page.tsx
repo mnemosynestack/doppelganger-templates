@@ -56,7 +56,7 @@ export default function SignupPage() {
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold mb-2">Create an account</h1>
                     <p className="text-sm text-muted-foreground">
-                        Join the Doppelganger community to share presets
+                        Join the Figranium community to share presets
                     </p>
                 </div>
 

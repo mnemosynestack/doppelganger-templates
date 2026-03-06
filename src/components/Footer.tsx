@@ -8,7 +8,7 @@ interface BlogPost {
 
 const getBlogPosts = async (): Promise<BlogPost[]> => {
     try {
-        const res = await fetch('https://doppelgangerdev.com/blog', { next: { revalidate: 3600 } });
+        const res = await fetch('https://figranium.dev/blog', { next: { revalidate: 3600 } });
         if (!res.ok) throw new Error('Failed to fetch blog');
 
         const html = await res.text();
@@ -46,7 +46,7 @@ const getBlogPosts = async (): Promise<BlogPost[]> => {
             if (title && href) {
                 // Ensure absolute URL if needed, though Next Link handles relative
                 if (href.startsWith('/')) {
-                    href = `https://doppelgangerdev.com${href}`;
+                    href = `https://figranium.dev${href}`;
                 }
                 posts.push({ title, href });
             }
@@ -55,10 +55,10 @@ const getBlogPosts = async (): Promise<BlogPost[]> => {
         // Fallback if scraping fails to find structured data (e.g. if class names changed or structure is wildly different)
         if (posts.length === 0) {
             return [
-                { title: "We Switched Our License (Again): Why Doppelganger is Now Under GPLv3", href: "https://doppelgangerdev.com/docs/we-switched-our-license-again" },
-                { title: "We Chose Safety. Then We Chose Growth (Introducing the Notice & Attribution License)", href: "https://doppelgangerdev.com/docs/introducing-the-notice-attribution-license" },
-                { title: "Doppelganger vs Skyvern: Which Browser Automation Tool Should You Use?", href: "https://doppelgangerdev.com/docs/doppelganger-vs-skyvern" },
-                { title: "Top 10 Self‑Hosted Browser Automation Tools (2026)", href: "https://doppelgangerdev.com/docs/top-10-self-hosted-browser-automation-tools-2026" },
+                { title: "We Switched Our License (Again): Why Figranium is Now Under GPLv3", href: "https://figranium.dev/docs/we-switched-our-license-again" },
+                { title: "We Chose Safety. Then We Chose Growth (Introducing the Notice & Attribution License)", href: "https://figranium.dev/docs/introducing-the-notice-attribution-license" },
+                { title: "Figranium vs Skyvern: Which Browser Automation Tool Should You Use?", href: "https://figranium.dev/docs/doppelganger-vs-skyvern" },
+                { title: "Top 10 Self‑Hosted Browser Automation Tools (2026)", href: "https://figranium.dev/docs/top-10-self-hosted-browser-automation-tools-2026" },
             ];
         }
 
@@ -67,10 +67,10 @@ const getBlogPosts = async (): Promise<BlogPost[]> => {
         console.error("Failed to fetch blog posts", e);
         // Return fallback data on error
         return [
-            { title: "We Switched Our License (Again): Why Doppelganger is Now Under GPLv3", href: "https://doppelgangerdev.com/docs/we-switched-our-license-again" },
-            { title: "We Chose Safety. Then We Chose Growth (Introducing the Notice & Attribution License)", href: "https://doppelgangerdev.com/docs/introducing-the-notice-attribution-license" },
-            { title: "Doppelganger vs Skyvern: Which Browser Automation Tool Should You Use?", href: "https://doppelgangerdev.com/docs/doppelganger-vs-skyvern" },
-            { title: "Top 10 Self‑Hosted Browser Automation Tools (2026)", href: "https://doppelgangerdev.com/docs/top-10-self-hosted-browser-automation-tools-2026" },
+            { title: "We Switched Our License (Again): Why Figranium is Now Under GPLv3", href: "https://figranium.dev/docs/we-switched-our-license-again" },
+            { title: "We Chose Safety. Then We Chose Growth (Introducing the Notice & Attribution License)", href: "https://figranium.dev/docs/introducing-the-notice-attribution-license" },
+            { title: "Figranium vs Skyvern: Which Browser Automation Tool Should You Use?", href: "https://figranium.dev/docs/doppelganger-vs-skyvern" },
+            { title: "Top 10 Self‑Hosted Browser Automation Tools (2026)", href: "https://figranium.dev/docs/top-10-self-hosted-browser-automation-tools-2026" },
         ];
     }
 };
@@ -82,7 +82,7 @@ export async function Footer() {
         <footer className="border-t border-border py-12 px-6 mt-20 bg-[#050505]">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
                 <div className="md:col-span-2 space-y-4">
-                    <h3 className="font-bold text-sm tracking-wider uppercase text-muted-foreground">Doppelganger</h3>
+                    <h3 className="font-bold text-sm tracking-wider uppercase text-muted-foreground">Figranium</h3>
                     <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
                         Self-hosted automation that keeps your data local, with secure API access when you need it.
                     </p>
@@ -101,17 +101,17 @@ export async function Footer() {
                                 </Link>
                             </li>
                         ))}
-                        <li><Link href="https://doppelgangerdev.com/blog" className="hover:text-foreground transition-colors text-white underline decoration-white/30 underline-offset-4">View all posts</Link></li>
+                        <li><Link href="https://figranium.dev/blog" className="hover:text-foreground transition-colors text-white underline decoration-white/30 underline-offset-4">View all posts</Link></li>
                     </ul>
                 </div>
 
                 <div className="space-y-4">
                     <h3 className="font-bold text-sm tracking-wider uppercase text-muted-foreground">Navigate</h3>
                     <ul className="space-y-3 text-sm text-muted-foreground">
-                        <li><Link href="https://doppelgangerdev.com" className="hover:text-foreground transition-colors">Home</Link></li>
-                        <li><Link href="https://doppelgangerdev.com/docs" className="hover:text-foreground transition-colors">Docs</Link></li>
-                        <li><Link href="https://doppelgangerdev.com/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
-                        <li><Link href="https://github.com/mnemosynestack/doppelganger" className="hover:text-foreground transition-colors">GitHub</Link></li>
+                        <li><Link href="https://figranium.dev" className="hover:text-foreground transition-colors">Home</Link></li>
+                        <li><Link href="https://figranium.dev/docs" className="hover:text-foreground transition-colors">Docs</Link></li>
+                        <li><Link href="https://figranium.dev/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
+                        <li><Link href="https://github.com/figranium/figranium" className="hover:text-foreground transition-colors">GitHub</Link></li>
                     </ul>
                 </div>
             </div>

@@ -50,13 +50,13 @@ export function MobileMenu({ isLoggedIn, isAdmin, signOutNode }: MobileMenuProps
                     </div>
 
                     <div className="flex flex-col gap-6 text-sm uppercase tracking-wide font-semibold">
-                        <a href="https://doppelgangerdev.com/docs" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <a href="https://figranium.dev/docs" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             Docs
                         </a>
-                        <a href="https://doppelgangerdev.com/blog" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <a href="https://figranium.dev/blog" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             Blog
                         </a>
-                        <a href="https://doppelgangerdev.com/releases" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                        <a href="https://figranium.dev/releases" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                             Releases
                         </a>
 

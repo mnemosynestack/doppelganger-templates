@@ -11,7 +11,7 @@ export function CTASection() {
 
             <div className="flex items-center gap-4">
                 <Link
-                    href="https://doppelgangerdev.com/docs"
+                    href="https://figranium.dev/docs"
                     className="px-6 py-2.5 rounded-lg text-sm font-semibold border border-border hover:bg-white/5 transition-colors text-foreground flex items-center gap-2"
                 >
                     Read Documentation

@@ -24,8 +24,8 @@ export async function Navbar() {
             <div className="flex items-center gap-2">
                 <Link href="/">
                     <Image
-                        src="/logo.png"
-                        alt="Doppelganger Logo"
+                        src="/logo.svg"
+                        alt="Figranium Logo"
                         width={0}
                         height={0}
                         sizes="100vw"
@@ -35,13 +35,13 @@ export async function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center gap-8 text-sm uppercase tracking-wide text-muted-foreground font-semibold flex-1 justify-center">
-                <a href="https://doppelgangerdev.com/docs" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                <a href="https://figranium.dev/docs" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                     Docs
                 </a>
-                <a href="https://doppelgangerdev.com/blog" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                <a href="https://figranium.dev/blog" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                     Blog
                 </a>
-                <a href="https://doppelgangerdev.com/releases" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+                <a href="https://figranium.dev/releases" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                     Releases
                 </a>
             </div>

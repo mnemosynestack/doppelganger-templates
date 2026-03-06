@@ -17,10 +17,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Doppelganger Templates — Community Automation Presets",
-    template: "%s | Doppelganger Templates",
+    default: "Figranium Templates — Community Automation Presets",
+    template: "%s | Figranium Templates",
   },
-  description: "Browse, share, and download community-built automation presets for Doppelganger.",
+  description: "Browse, share, and download community-built automation presets for Figranium.",
 };
 
 export default function RootLayout({
