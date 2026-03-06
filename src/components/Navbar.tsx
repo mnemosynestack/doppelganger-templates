@@ -29,7 +29,7 @@ export async function Navbar() {
                         width={0}
                         height={0}
                         sizes="100vw"
-                        className="w-auto h-8"
+                        className="w-auto h-10"
                     />
                 </Link>
             </div>
