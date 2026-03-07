@@ -55,3 +55,8 @@ CREATE TABLE IF NOT EXISTS preset_downloads (
 CREATE INDEX IF NOT EXISTS idx_presets_type ON presets(type);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+
+-- Performance: Indexes for frequent sorting and filtering
+CREATE INDEX IF NOT EXISTS idx_presets_downloads ON presets(downloads DESC);
+CREATE INDEX IF NOT EXISTS idx_presets_created_at ON presets(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_presets_category ON presets(category);
