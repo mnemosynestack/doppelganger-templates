@@ -124,16 +124,21 @@ export default function DashboardPage() {
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end gap-2">
                                                 <Link href={`/presets/${preset.id}/edit`}>
-                                                    <button className="p-2 hover:bg-[#262626] rounded text-muted-foreground hover:text-foreground transition-colors" title="Edit">
-                                                        <MaterialIcon name="edit" className="text-lg" />
+                                                    <button
+                                                        className="p-2 hover:bg-[#262626] rounded text-muted-foreground hover:text-foreground transition-colors"
+                                                        title="Edit"
+                                                        aria-label={`Edit ${preset.title}`}
+                                                    >
+                                                        <MaterialIcon name="edit" className="text-lg" aria-hidden="true" />
                                                     </button>
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDelete(preset.id)}
                                                     className="p-2 hover:bg-red-900/20 rounded text-muted-foreground hover:text-red-500 transition-colors"
                                                     title="Delete"
+                                                    aria-label={`Delete ${preset.title}`}
                                                 >
-                                                    <MaterialIcon name="delete" className="text-lg" />
+                                                    <MaterialIcon name="delete" className="text-lg" aria-hidden="true" />
                                                 </button>
                                             </div>
                                         </td>
