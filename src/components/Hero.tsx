@@ -72,7 +72,8 @@ export function Hero() {
                         <MaterialIcon name="search" className="text-base" />
                     </div>
                     <input
-                        type="text"
+                        type="search"
+                        aria-label="Search presets"
                         className="w-full bg-[#121212] border border-[#262626] text-sm rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-all placeholder:text-muted-foreground/50 text-foreground"
                         placeholder="Search presets (e.g., 'LinkedIn Scraper', 'SEO Audit')..."
                         value={query}
