@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import MaterialIcon from "@/components/MaterialIcon";
 import clsx from "clsx";
 
@@ -36,34 +36,41 @@ export function Sidebar({ counts }: SidebarProps) {
     const currentCategory = searchParams.get("category") || "All Presets";
     const [showAllCategories, setShowAllCategories] = useState(false);
 
-    const getCategoryHref = (categoryName: string) => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (categoryName === "All Presets") {
-            params.delete("category");
-        } else {
-            params.set("category", categoryName);
-        }
-        return `/?${params.toString()}`;
-    };
+    const categories = useMemo(() => {
+        const baseParamsString = searchParams.toString();
 
-    const categories = [
-        { name: "All Presets", count: counts["All Presets"] || 0, icon: categoryIcons["All Presets"] },
-        { name: "QA Testing", count: counts["QA Testing"] || 0, icon: categoryIcons["QA Testing"] },
-        { name: "Lead Gen", count: counts["Lead Gen"] || 0, icon: categoryIcons["Lead Gen"] },
-        { name: "Social Media", count: counts["Social Media"] || 0, icon: categoryIcons["Social Media"] },
-        { name: "Shopping", count: counts["Shopping"] || 0, icon: categoryIcons["Shopping"] },
-        { name: "Monitoring", count: counts["Monitoring"] || 0, icon: categoryIcons["Monitoring"] },
-        { name: "AI", count: counts["AI"] || 0, icon: categoryIcons["AI"] },
-        { name: "Jobs", count: counts["Jobs"] || 0, icon: categoryIcons["Jobs"] },
-        { name: "News", count: counts["News"] || 0, icon: categoryIcons["News"] },
-        { name: "Videos", count: counts["Videos"] || 0, icon: categoryIcons["Videos"] },
-        { name: "Reviews", count: counts["Reviews"] || 0, icon: categoryIcons["Reviews"] },
-        { name: "Developer Tools", count: counts["Developer Tools"] || 0, icon: categoryIcons["Developer Tools"] },
-        { name: "SEO", count: counts["SEO"] || 0, icon: categoryIcons["SEO"] },
-        { name: "Real Estate", count: counts["Real Estate"] || 0, icon: categoryIcons["Real Estate"] },
-        { name: "Travel", count: counts["Travel"] || 0, icon: categoryIcons["Travel"] },
-        { name: "Other", count: counts["Other"] || 0, icon: categoryIcons["Other"] },
-    ];
+        const rawCategories = [
+            { name: "All Presets", count: counts["All Presets"] || 0, icon: categoryIcons["All Presets"] },
+            { name: "QA Testing", count: counts["QA Testing"] || 0, icon: categoryIcons["QA Testing"] },
+            { name: "Lead Gen", count: counts["Lead Gen"] || 0, icon: categoryIcons["Lead Gen"] },
+            { name: "Social Media", count: counts["Social Media"] || 0, icon: categoryIcons["Social Media"] },
+            { name: "Shopping", count: counts["Shopping"] || 0, icon: categoryIcons["Shopping"] },
+            { name: "Monitoring", count: counts["Monitoring"] || 0, icon: categoryIcons["Monitoring"] },
+            { name: "AI", count: counts["AI"] || 0, icon: categoryIcons["AI"] },
+            { name: "Jobs", count: counts["Jobs"] || 0, icon: categoryIcons["Jobs"] },
+            { name: "News", count: counts["News"] || 0, icon: categoryIcons["News"] },
+            { name: "Videos", count: counts["Videos"] || 0, icon: categoryIcons["Videos"] },
+            { name: "Reviews", count: counts["Reviews"] || 0, icon: categoryIcons["Reviews"] },
+            { name: "Developer Tools", count: counts["Developer Tools"] || 0, icon: categoryIcons["Developer Tools"] },
+            { name: "SEO", count: counts["SEO"] || 0, icon: categoryIcons["SEO"] },
+            { name: "Real Estate", count: counts["Real Estate"] || 0, icon: categoryIcons["Real Estate"] },
+            { name: "Travel", count: counts["Travel"] || 0, icon: categoryIcons["Travel"] },
+            { name: "Other", count: counts["Other"] || 0, icon: categoryIcons["Other"] },
+        ];
+
+        return rawCategories.map(cat => {
+            const params = new URLSearchParams(baseParamsString);
+            if (cat.name === "All Presets") {
+                params.delete("category");
+            } else {
+                params.set("category", cat.name);
+            }
+            return {
+                ...cat,
+                href: `/?${params.toString()}`
+            };
+        });
+    }, [searchParams, counts]);
 
     const displayedCategories = showAllCategories ? categories : categories.slice(0, 6);
 
@@ -85,7 +92,7 @@ export function Sidebar({ counts }: SidebarProps) {
                         return (
                             <Link
                                 key={category.name}
-                                href={getCategoryHref(category.name)}
+                                href={category.href}
                                 scroll={false}
                                 className={clsx(
                                     "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer",
