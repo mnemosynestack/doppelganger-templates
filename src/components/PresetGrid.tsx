@@ -7,6 +7,8 @@ import MaterialIcon from "@/components/MaterialIcon";
 
 interface PresetGridProps {
     presets: PresetProps[];
+    total: number;
+    currentPage: number;
 }
 
 function EmptyState() {
@@ -35,23 +37,32 @@ function EmptyState() {
     );
 }
 
-export function PresetGrid({ presets }: PresetGridProps) {
+export function PresetGrid({ presets, total, currentPage }: PresetGridProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentSort = searchParams.get("sort") || "popular";
-    const currentPage = parseInt(searchParams.get("page") || "1", 10);
+
+    const PAGE_SIZE = 12;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newSort = e.target.value;
         const params = new URLSearchParams(searchParams.toString());
         params.set("sort", newSort);
+        params.delete("page");
         router.push(`/?${params.toString()}`, { scroll: false });
+    };
+
+    const handlePageChange = (newPage: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", newPage.toString());
+        router.push(`/?${params.toString()}`);
     };
 
     return (
         <div className="w-full">
             <div className="flex items-center justify-between mb-6">
-                <p className="text-muted-foreground text-sm">Showing <span className="text-foreground font-medium">{presets.length}</span> presets</p>
+                <p className="text-muted-foreground text-sm">Showing <span className="text-foreground font-medium">{total}</span> presets</p>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground relative">
                     <span>Sort by:</span>
                     <div className="relative flex items-center gap-1 group">
@@ -78,17 +89,24 @@ export function PresetGrid({ presets }: PresetGridProps) {
                         ))}
                     </div>
 
-                    {/* Pagination Controls match original design */}
-                    <div className="flex justify-center items-center gap-2">
-                        {currentPage > 1 && (
-                            <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors disabled:opacity-50" aria-label="Previous page">
-                                &lt;
-                            </button>
-                        )}
-                        <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-black font-medium" aria-current="page">
-                            {currentPage}
+                    <div className="flex justify-center items-center gap-2 mt-8">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage <= 1}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors disabled:opacity-50 cursor-pointer"
+                            aria-label="Previous page">
+                            &lt;
                         </button>
-                        {/* ... other standard pagination buttons ... */}
+                        <span className="text-sm font-medium mx-2">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage >= totalPages}
+                            className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors disabled:opacity-50 cursor-pointer"
+                            aria-label="Next page">
+                            &gt;
+                        </button>
                     </div>
                 </>
             ) : (

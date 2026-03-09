@@ -13,7 +13,7 @@ const getCategoryCounts = cache(async () => {
     return result.rows;
 }, ['category-counts'], { revalidate: 3600, tags: ['preset-counts'] });
 
-export async function getPresets(category?: string, sort?: string, search?: string) {
+export async function getPresets(category?: string, sort?: string, search?: string, page: number = 1, limit: number = 12) {
     noStore(); // Disable caching for now to see updates immediately
 
     try {
@@ -51,6 +51,9 @@ export async function getPresets(category?: string, sort?: string, search?: stri
         const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
         // Select only necessary columns
+        const totalQuery = `SELECT COUNT(*) as total FROM presets ${whereClause}`;
+        const totalPromise = query(totalQuery, params);
+
         const dataQuery = `
         SELECT
             id,
@@ -66,12 +69,16 @@ export async function getPresets(category?: string, sort?: string, search?: stri
         FROM presets
         ${whereClause}
         ORDER BY ${orderBy}
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
 
+        const dataParams = [...params, limit, (page - 1) * limit];
+
         // Execute queries in parallel
-        const [countsRows, dataResult] = await Promise.all([
+        const [countsRows, totalResult, dataResult] = await Promise.all([
             countsPromise,
-            query(dataQuery, params)
+            totalPromise,
+            query(dataQuery, dataParams)
         ]);
 
         // Process counts
@@ -96,9 +103,11 @@ export async function getPresets(category?: string, sort?: string, search?: stri
             icon: r.icon || r.target_url || "public"
         }));
 
-        return { presets, counts };
+        const total = parseInt(totalResult.rows[0].total, 10);
+
+        return { presets, counts, total };
     } catch (error) {
         console.error("Failed to fetch presets:", error);
-        return { presets: [], counts: {} };
+        return { presets: [], counts: {}, total: 0 };
     }
 }
