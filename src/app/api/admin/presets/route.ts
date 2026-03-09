@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
         // Fetch all presets, including author details directly from users table using JOIN
         const { rows } = await query(`
-            SELECT p.*, u.username as author_username 
+            SELECT p.id, p.user_id, p.title, p.description, p.type, p.category, p.icon, p.downloads, p.time_estimate, p.target_url, p.created_at, p.updated_at, u.username as author_username
             FROM presets p
             LEFT JOIN users u ON p.user_id = u.id
             ORDER BY p.created_at DESC

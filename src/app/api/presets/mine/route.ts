@@ -18,7 +18,7 @@ export async function GET(req: Request) {
         }
 
         const { rows } = await query(
-            'SELECT * FROM presets WHERE user_id = $1 ORDER BY created_at DESC',
+            'SELECT id, user_id, title, description, author_name, type, category, icon, downloads, time_estimate, target_url, created_at, updated_at FROM presets WHERE user_id = $1 ORDER BY created_at DESC',
             [payload.sub]
         );
 
