@@ -23,6 +23,11 @@ export async function POST(req: Request) {
 
         const { username, email, password } = result.data;
 
+        // Security check: Prevent registering the admin username
+        if (process.env.ADMIN_USERNAME && username.toLowerCase() === process.env.ADMIN_USERNAME.toLowerCase()) {
+            return NextResponse.json({ error: 'Cannot register this username' }, { status: 403 });
+        }
+
         // Check if user exists
         const existingUser = await query('SELECT id FROM users WHERE email = $1 OR username = $2', [email, username]);
         if ((existingUser.rows.length || 0) > 0) {
