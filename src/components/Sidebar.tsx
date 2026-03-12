@@ -43,6 +43,7 @@ export function Sidebar({ counts }: SidebarProps) {
         } else {
             params.set("category", categoryName);
         }
+        params.delete("page");
         return `/?${params.toString()}`;
     };
 

@@ -4,9 +4,10 @@ import { PresetGrid } from "@/components/PresetGrid";
 import { CTASection } from "@/components/CTASection";
 import { getPresets } from "@/lib/presets";
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, sort?: string, search?: string }> }) {
-  const { category, sort, search } = await searchParams;
-  const { presets, counts } = await getPresets(category, sort, search);
+export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, sort?: string, search?: string, page?: string }> }) {
+  const { category, sort, search, page } = await searchParams;
+  const currentPage = parseInt(page || "1", 10);
+  const { presets, counts } = await getPresets(category, sort, search, currentPage);
 
   return (
     <div className="text-foreground font-sans selection:bg-green-500/30 selection:text-green-200">

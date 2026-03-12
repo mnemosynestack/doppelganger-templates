@@ -41,6 +41,7 @@ export function Hero() {
                 params.delete("search");
                 params.delete("q");
             }
+            params.delete("page");
             router.push(`/?${params.toString()}`, { scroll: false });
         }, 300);
     };

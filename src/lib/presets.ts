@@ -13,7 +13,7 @@ const getCategoryCounts = cache(async () => {
     return result.rows;
 }, ['category-counts'], { revalidate: 3600, tags: ['preset-counts'] });
 
-export async function getPresets(category?: string, sort?: string, search?: string) {
+export async function getPresets(category?: string, sort?: string, search?: string, page: number = 1) {
     noStore(); // Disable caching for now to see updates immediately
 
     try {
@@ -51,6 +51,9 @@ export async function getPresets(category?: string, sort?: string, search?: stri
         const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
         // Select only necessary columns
+        const limit = 12;
+        const offset = (page - 1) * limit;
+
         const dataQuery = `
         SELECT
             id,
@@ -66,7 +69,10 @@ export async function getPresets(category?: string, sort?: string, search?: stri
         FROM presets
         ${whereClause}
         ORDER BY ${orderBy}
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
     `;
+
+        params.push(limit, offset);
 
         // Execute queries in parallel
         const [countsRows, dataResult] = await Promise.all([

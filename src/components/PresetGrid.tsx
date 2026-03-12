@@ -45,6 +45,7 @@ export function PresetGrid({ presets }: PresetGridProps) {
         const newSort = e.target.value;
         const params = new URLSearchParams(searchParams.toString());
         params.set("sort", newSort);
+        params.delete("page");
         router.push(`/?${params.toString()}`, { scroll: false });
     };
 
@@ -78,17 +79,37 @@ export function PresetGrid({ presets }: PresetGridProps) {
                         ))}
                     </div>
 
-                    {/* Pagination Controls match original design */}
+                    {/* Pagination Controls */}
                     <div className="flex justify-center items-center gap-2">
                         {currentPage > 1 && (
-                            <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors disabled:opacity-50" aria-label="Previous page">
+                            <button
+                                onClick={() => {
+                                    const params = new URLSearchParams(searchParams.toString());
+                                    params.set("page", (currentPage - 1).toString());
+                                    router.push(`/?${params.toString()}`, { scroll: false });
+                                }}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors cursor-pointer"
+                                aria-label="Previous page"
+                            >
                                 &lt;
                             </button>
                         )}
                         <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-black font-medium" aria-current="page">
                             {currentPage}
                         </button>
-                        {/* ... other standard pagination buttons ... */}
+                        {presets.length === 12 && (
+                            <button
+                                onClick={() => {
+                                    const params = new URLSearchParams(searchParams.toString());
+                                    params.set("page", (currentPage + 1).toString());
+                                    router.push(`/?${params.toString()}`, { scroll: false });
+                                }}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#262626] text-muted-foreground hover:bg-[#121212] transition-colors cursor-pointer"
+                                aria-label="Next page"
+                            >
+                                &gt;
+                            </button>
+                        )}
                     </div>
                 </>
             ) : (

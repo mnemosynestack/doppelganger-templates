@@ -1,0 +1,39 @@
+
+> figranium-templates@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+✓ Ready in 1136ms
+○ Compiling / ...
+Failed to fetch presets: AggregateError:
+    at async getPresets (src/lib/presets.ts:78:42)
+    at async Home (src/app/page.tsx:10:31)
+  76 |
+  77 |         // Execute queries in parallel
+> 78 |         const [countsRows, dataResult] = await Promise.all([
+     |                                          ^
+  79 |             countsPromise,
+  80 |             query(dataQuery, params)
+  81 |         ]); {
+  code: 'ECONNREFUSED'
+}
+ GET / 200 in 29.9s (compile: 19.4s, render: 10.5s)
+Failed to fetch blog posts TypeError: fetch failed
+    at async getBlogPosts (src/components/Footer.tsx:11:21)
+    at async Footer (src/components/Footer.tsx:79:19)
+   9 | const getBlogPosts = async (): Promise<BlogPost[]> => {
+  10 |     try {
+> 11 |         const res = await fetch('https://figranium.dev/blog', { next: { revalidate: 3600 } });
+     |                     ^
+  12 |         if (!res.ok) throw new Error('Failed to fetch blog');
+  13 |
+  14 |         const html = await res.text(); {
+  [cause]: Error [ConnectTimeoutError]: Connect Timeout Error (attempted address: figranium.dev:443, timeout: 10000ms)
+      at ignore-listed frames {
+    code: 'UND_ERR_CONNECT_TIMEOUT'
+  }
+}
