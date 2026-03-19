@@ -46,7 +46,7 @@
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --font-sans: var(--font-geologica);
+  --font-sans: var(--font-questrial);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -68,7 +68,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geologica), 'Geologica', sans-serif;
+  font-family: var(--font-questrial), 'Questrial', sans-serif;
 }
 
 * {
